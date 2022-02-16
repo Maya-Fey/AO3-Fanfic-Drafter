@@ -14,7 +14,19 @@ html, body, #root {
 }
 
 .app__main {
-  height: calc(100% - 2em);
+  height: calc(100% - 2.5em);
+}
+
+.app__window--maximized {
+  width: calc(100% - 5em);
+}
+
+.app__window--both {
+  width: 50%;
+}
+
+.app__window--minimized {
+  width: 5em;
 }
 
 .app__left-div {
@@ -26,14 +38,14 @@ html, body, #root {
 }
 
 .app__main > div {
-  width: 50%;
   height: 100%;
   padding: 1em;
   display: inline-block;
 }
 
 .top-menu {
-  height: 2em;
+  height: 2.5em;
+  padding: 1em 1em 0em 1em;
 }
 
 .editor {
