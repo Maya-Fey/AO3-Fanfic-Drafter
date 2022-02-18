@@ -2,8 +2,9 @@ import { makeAutoObservable } from 'mobx';
 import { observer } from 'mobx-react';
 import './App.css';
 import { Editor, EditorContext } from './editor/editor';
+import { EditorTarget } from './fanfic/editortarget';
 import { Fanfic } from './fanfic/fanfiction';
-import { Preview } from './preview';
+import { Preview, PreviewContext } from './preview/preview';
 import { TopMenu } from './topmenu/topmenu';
 
 export enum WindowFocus {
@@ -15,7 +16,10 @@ export enum WindowFocus {
 export class AppContext {
   private focus: WindowFocus = WindowFocus.BOTH;
 
+  target: EditorTarget = new EditorTarget();
+
   editor: EditorContext = new EditorContext();
+  preview: PreviewContext = new PreviewContext();
   fic: FanficContext = new FanficContext();
 
   constructor () {
@@ -50,7 +54,7 @@ export const App = observer(()=>{
           <Editor ctx={ctx.editor} fic={ctx.fic}/>
         </div>
         <div className={"app__right-div " + focusClass(WindowFocus.PREVIEW_ONLY, ctx.getFocus())}>
-          <Preview/>
+          <Preview ctx={ctx.preview} fic={ctx.fic}/>
         </div>
       </div>
     </div>
