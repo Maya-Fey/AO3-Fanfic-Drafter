@@ -41,6 +41,7 @@ html, body, #root {
   height: 100%;
   padding: 1em;
   display: inline-block;
+  vertical-align: top;
 }
 
 .top-menu {
@@ -56,4 +57,54 @@ html, body, #root {
 .preview {
   height: 100%;
   border: 2px dashed grey;
+}
+
+.tabbed-window {
+  width: 100%;
+  height: 100%;
+}
+
+.tabbed-window__tab-selector {
+  height: 2em;
+}
+
+.tabbed-window__tab-selector-anchor {
+  display: inline-block;
+  height: 100%;
+}
+
+.tabbed-window__tab-selector-button {
+  display: inline-block;
+  vertical-align: bottom;
+
+  border-top: 1px solid grey;
+  border-left: 1px solid grey;
+  border-right: 1px solid grey;
+  border-bottom: none;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 3px;
+
+  height: 70%;
+  line-height: 100%;  
+  font-family: inherit;
+  font-size: inherit;
+
+  --tabbed-window__tab-selector-button--padding: 2px;
+  padding: var(--tabbed-window__tab-selector-button--padding);
+
+  margin: 0 1px;
+}
+
+span.tabbed-window__tab-selector-button {
+  line-height: 1.1;
+  margin: 0 -1px;
+  padding: var(--tabbed-window__tab-selector-button--padding) calc(var(--tabbed-window__tab-selector-button--padding) + 2px)
+}
+
+.tabbed-window__open-tab {
+  height: calc(100% - 2em);
+
+  background-color: white;
+  border: 1px solid grey;
+  filter: drop-shadow(1px 1px grey);
 }

@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { observer } from 'mobx-react';
 import './App.css';
-import { Editor } from './editor';
+import { Editor, EditorContext } from './editor/editor';
 import { Preview } from './preview';
 import { TopMenu } from './topmenu/topmenu';
 
@@ -13,6 +13,8 @@ export enum WindowFocus {
 
 export class AppContext {
   private focus: WindowFocus = WindowFocus.BOTH;
+
+  editor: EditorContext = new EditorContext();
 
   constructor () {
     makeAutoObservable(this);
@@ -35,7 +37,7 @@ export const App = observer(()=>{
       <TopMenu ctx={ctx}/>
       <div className="app__main">
         <div className={"app__left-div " + focusClass(WindowFocus.EDITOR_ONLY, ctx.getFocus())}>
-          <Editor/>
+          <Editor ctx={ctx.editor}/>
         </div>
         <div className={"app__right-div " + focusClass(WindowFocus.PREVIEW_ONLY, ctx.getFocus())}>
           <Preview/>
