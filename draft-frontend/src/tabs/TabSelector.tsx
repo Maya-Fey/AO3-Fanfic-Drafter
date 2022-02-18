@@ -26,8 +26,8 @@ interface TabSelectorButtonProps extends React.HTMLProps<HTMLButtonElement> {
 
 function TabSelectorButton(props: TabSelectorButtonProps): JSX.Element {
     if(props.enabled) {
-        return <button className={props.className} onClick={()=>{props.setTab()}}>{props.name}</button>
+        return <button key={props.name} className={props.className} onClick={()=>{props.setTab()}}>{props.name}</button>
     } else {
-        return <span className={props.className}>{props.name}</span>
+        return <span key={props.name} className={props.className}>{props.name}</span>
     }
 }
