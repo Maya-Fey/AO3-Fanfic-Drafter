@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { observer } from 'mobx-react';
 import './App.css';
 import { Editor, EditorContext } from './editor/editor';
+import { Fanfic } from './fanfic/fanfiction';
 import { Preview } from './preview';
 import { TopMenu } from './topmenu/topmenu';
 
@@ -15,6 +16,7 @@ export class AppContext {
   private focus: WindowFocus = WindowFocus.BOTH;
 
   editor: EditorContext = new EditorContext();
+  fic: FanficContext = new FanficContext();
 
   constructor () {
     makeAutoObservable(this);
@@ -29,6 +31,14 @@ export class AppContext {
   }
 }
 
+export class FanficContext {
+  fic: Fanfic = new Fanfic("New Fanfic");
+
+  constructor() {
+    makeAutoObservable(this);
+  }
+}
+
 let ctx: AppContext = new AppContext();
 
 export const App = observer(()=>{
@@ -37,7 +47,7 @@ export const App = observer(()=>{
       <TopMenu ctx={ctx}/>
       <div className="app__main">
         <div className={"app__left-div " + focusClass(WindowFocus.EDITOR_ONLY, ctx.getFocus())}>
-          <Editor ctx={ctx.editor}/>
+          <Editor ctx={ctx.editor} fic={ctx.fic}/>
         </div>
         <div className={"app__right-div " + focusClass(WindowFocus.PREVIEW_ONLY, ctx.getFocus())}>
           <Preview/>

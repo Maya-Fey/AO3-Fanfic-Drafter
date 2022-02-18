@@ -10,6 +10,7 @@
     "@types/node": "^16.11.25",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
+    "codemirror": "^5.65.1",
     "mobx": "^6.3.13",
     "mobx-react": "^7.2.1",
     "react": "^17.0.2",
@@ -41,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/codemirror": "^5.60.5"
   }
 }

@@ -8,7 +8,7 @@ interface TabbedWindowProps<Props extends React.HTMLProps<HTMLDivElement>, Enum>
 }
 
 export const TabbedWindow = observer(function<Props extends React.HTMLProps<HTMLDivElement>, Enum>(props: TabbedWindowProps<Props, Enum>) {
-    let Tab: ((props: Props)=>JSX.Element) = props.ctx.currentTab().render;
+    let Tab: ((props: Props)=>JSX.Element) = observer(props.ctx.currentTab().render.bind(props.ctx.currentTab()));
     return (
         <div className="tabbed-window">
             <TabSelector<Props, Enum> ctx={props.ctx}/>

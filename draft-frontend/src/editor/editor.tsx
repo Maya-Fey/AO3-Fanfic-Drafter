@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import { FanficContext } from "../App";
 import { Tab, TabbedContext } from "../tabs/TabbedContext";
 import { TabbedWindow } from "../tabs/TabbedWindow";
 import { MetadataTab } from "./metadata";
@@ -28,7 +29,8 @@ export class EditorContext {
 }
 
 export interface EditorProps extends React.HTMLProps<HTMLDivElement> {
-    ctx: EditorContext
+    ctx: EditorContext;
+    fic: FanficContext;
 }
 
 export function Editor(props: EditorProps) {
