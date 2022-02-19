@@ -54,7 +54,7 @@ export const App = observer(()=>{
           <Editor ctx={ctx.editor} fic={ctx.fic}/>
         </div>
         <div className={"app__right-div " + focusClass(WindowFocus.PREVIEW_ONLY, ctx.getFocus())}>
-          <Preview ctx={ctx.preview} fic={ctx.fic}/>
+          <Preview ctx={ctx.preview} targ={ctx.target} fic={ctx.fic}/>
         </div>
       </div>
     </div>

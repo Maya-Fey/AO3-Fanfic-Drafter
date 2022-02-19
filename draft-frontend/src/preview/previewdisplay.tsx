@@ -1,9 +1,9 @@
 import { Tab } from "../tabs/TabbedContext";
-import { PreviewProps } from "./preview";
+import { PreviewTabProps } from "./preview";
 
-export class PreviewDisplayTab implements Tab<PreviewProps> {
+export class PreviewDisplayTab implements Tab<PreviewTabProps> {
     
-    render(props: PreviewProps): JSX.Element {
+    render(props: PreviewTabProps): JSX.Element {
         return (
             <span>
                 Preview
