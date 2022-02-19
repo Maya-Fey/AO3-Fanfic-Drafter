@@ -68,6 +68,24 @@ html, body, #root {
   border: 2px dashed grey;
 }
 
+.compiler-output {
+  height: 100%;
+}
+
+.compiler-output--selector-container {
+  height: 2em;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ddd;
+}
+
+.compiler-output--code-container {
+  height: calc(100% - 2em);
+}
+
+.compiler-output--code-container > .CodeMirror {
+  height: 100%;
+}
+
 .tabbed-window {
   width: 100%;
   height: 100%;
