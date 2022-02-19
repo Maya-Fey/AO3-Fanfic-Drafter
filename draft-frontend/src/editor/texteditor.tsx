@@ -30,6 +30,16 @@ export class TextEditorTab implements Tab<EditorProps> {
                 lineNumbers: true,
                 lineWrapping: true
             });
+
+            let autosave = ()=>{
+                if(this.editor !== undefined) {
+                    props.fic.fic.text = this.editor.getValue();
+                }
+            }
+            let autosaveHandle: NodeJS.Timeout = setInterval(autosave, 2000);
+            return ()=>{
+                clearInterval(autosaveHandle);
+            }
         }, [textRef]);
         
         return (
@@ -43,6 +53,7 @@ export class TextEditorTab implements Tab<EditorProps> {
     onClose(): void {
         this.ctx!.fic.text = this.editor!.getValue();
         this.editor!.toTextArea();
+        this.editor = undefined;
     }
     
 }
