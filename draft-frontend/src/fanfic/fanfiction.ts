@@ -1,3 +1,6 @@
+import { makeAutoObservable } from "mobx";
+import { FicTemplate } from "./template";
+
 export enum Rating {
     NOT_RATED,
     GENERAL_AUDIENCES,
@@ -52,8 +55,11 @@ export class Fanfic implements HasValidator {
 
     text = "";
 
+    templates: Map<string, FicTemplate> = new Map<string, FicTemplate>();
+
     constructor(title: string) {
         this.title = title;
+        makeAutoObservable(this);
     }
 
     validate(): ValidationResult {
