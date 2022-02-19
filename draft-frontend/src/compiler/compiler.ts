@@ -93,6 +93,7 @@ function compile(indent: number, inline: boolean, block: boolean, nodes: Node[],
                         }
 
                         chapters.push(code);
+                        acc = "";
                         code = "";
                     } else {
                         acc = line;
