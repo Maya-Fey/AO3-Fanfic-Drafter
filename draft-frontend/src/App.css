@@ -51,7 +51,6 @@ html, body, #root {
 
 .editor {
   height: 100%;
-  border: 2px dashed grey;
 }
 
 .fic-editor {
@@ -65,7 +64,6 @@ html, body, #root {
 
 .preview {
   height: 100%;
-  border: 2px dashed grey;
 }
 
 .compiler-output {
@@ -92,7 +90,7 @@ html, body, #root {
 }
 
 .tabbed-window__tab-selector {
-  height: 2em;
+  height: 1.6em;
 }
 
 .tabbed-window__tab-selector-anchor {
@@ -111,7 +109,7 @@ html, body, #root {
   border-top-left-radius: 2px;
   border-top-right-radius: 3px;
 
-  height: 70%;
+  height: 1.4em;
   line-height: 100%;  
   font-family: inherit;
   font-size: inherit;
@@ -123,7 +121,6 @@ html, body, #root {
 }
 
 span.tabbed-window__tab-selector-button {
-  line-height: 1.1;
   margin: 0 -1px;
   padding: var(--tabbed-window__tab-selector-button--padding) calc(var(--tabbed-window__tab-selector-button--padding) + 2px)
 }
