@@ -31,11 +31,7 @@ export function compileFanfic(fic: Fanfic, target: EditorTarget): string[]|FicCo
     });
 
     let dom: Document = parseDocument(fic.text);
-    return compile(0, false, true, LEVEL_ROOT, dom.childNodes, compiledTemplates);
-}
-
-function genIndent(indent: number): string {
-    return Array(indent + 1).join('\t');
+    return compile(0, LEVEL_ROOT, dom.childNodes, compiledTemplates);
 }
 
 function pTag(open: boolean): string {
@@ -54,16 +50,29 @@ function closeOfDefault(tag: Element) {
     return "</" + tag.tagName + ">";
 }
 
+function rmTabs(s: string): string {
+    return s.replaceAll("\t", "");
+}
+
 function strip(s: string): string {
-    if(s[0] === '\t' || s[0] === '\n')
+    if(s[0] === '\n')
         return strip(s.slice(1, s.length));
-    else if(s[s.length - 1] === '\t' || s[s.length - 1] === '\n')
+    else if(s[s.length - 1] === '\n')
         return strip(s.slice(0, -1));
     else
         return s;
 }
 
-function compile(indent: number, inline: boolean, block: boolean, level: Level, nodes: Node[], compiledTemplates: Map<string, CompiledTemplate>): string[]|FicCompilerError
+function breakAndIndentSingleNewlines(s: string, markup: boolean): string {
+    let lines: string[] = s.split("\n");
+    return lines.map((line, idx)=>"\t" + line + ((markup && idx < lines.length - 1) ? "<br>\n" : "\n")).reduce((p, c)=>p+c);
+}
+
+function isNonEmpty(s: string|undefined): boolean {
+    return s !== undefined && (strip(s).length > 0);
+}
+
+function compile(indent: number, level: Level, nodes: Node[], compiledTemplates: Map<string, CompiledTemplate>): string[]|FicCompilerError
 {
     let chapters: string[] = [];
     let code: string = "";
@@ -71,22 +80,20 @@ function compile(indent: number, inline: boolean, block: boolean, level: Level, 
     let lastWasCode: boolean = false;
     for(let i: number = 0; i < nodes.length; i++) {
         let node: Node = nodes[i];
-        let next: Node|undefined = nodes[i + 1];
         if(node instanceof Text) {
             let tN: Text = node as Text;
-            let lines: string[] = tN.data.split("\n\n").map(strip);
+            let lines: string[] = rmTabs(tN.data).split("\n\n");
 
             lines.forEach(line=>{
                 if(lastWasCode) {
                     lastWasCode = false;
                     acc = (acc as string) + line;
                 } else {
-                    let accNotEmpty: boolean = acc !== undefined && acc.length > 0;
-                    if(accNotEmpty) {
+                    if(isNonEmpty(acc)) {
                         if(level.canBeParentOf(LEVEL_INLINE)) 
-                            code += acc as string;
+                            code += strip(acc as string);
                         else
-                            code += genIndent(indent) + pTag(true) + "\n" + genIndent(indent + 1) + acc as string + "\n" + genIndent(indent) + pTag(false) + "\n";
+                            code += pTag(true) + "\n" + breakAndIndentSingleNewlines(strip(acc as string),  true)  + pTag(false) + "\n";
                     } 
                     if(line.startsWith("#############")) {    
                         if(indent != 0) {
@@ -112,18 +119,19 @@ function compile(indent: number, inline: boolean, block: boolean, level: Level, 
                 }
 
                 if(nLevel !== LEVEL_INLINE) {
-                    if(acc !== undefined && acc.length > 0) { return new FicCompilerError("Block-level tags should be on their own line"); }
+                    if(isNonEmpty(acc)) { return new FicCompilerError("Block-level tags shouldn't be within less than two newlines of raw text"); }
+                    acc = "";
 
-                    let ret: string[]|FicCompilerError = compile(indent + 1, false, true, nLevel, ele.childNodes, compiledTemplates);
+                    let ret: string[]|FicCompilerError = compile(indent + 1, nLevel, ele.childNodes, compiledTemplates);
                     if(ret instanceof FicCompilerError) return ret;
                     let middle = (ret as string[])[0];
                     if(isSelfClosing(ele.tagName)) {
-                        code += genIndent(indent) + selfClosing(ele) + "\n";
+                        code += selfClosing(ele) + "\n";
                     } else {
-                        code += genIndent(indent) + openOfDefault(ele) + "\n" + middle + genIndent(indent) + closeOfDefault(ele) + "\n";
+                        code += openOfDefault(ele) + "\n" + breakAndIndentSingleNewlines(strip(middle), false) + closeOfDefault(ele) + "\n";
                     }
                 } else {
-                    let ret: string[]|FicCompilerError = compile(-1, true, false, nLevel, ele.childNodes, compiledTemplates);
+                    let ret: string[]|FicCompilerError = compile(-1, nLevel, ele.childNodes, compiledTemplates);
                     if(ret instanceof FicCompilerError) return ret;
                     let middle = (ret as string[])[0];
                     acc = acc === undefined ? "" : acc as string;
@@ -131,7 +139,11 @@ function compile(indent: number, inline: boolean, block: boolean, level: Level, 
                     if(isSelfClosing(ele.tagName)) {
                         acc += selfClosing(ele);
                     } else {
-                        acc += openOfDefault(ele) + middle + closeOfDefault(ele);
+                        if((middle.indexOf("\n") > -1)) {
+                            acc += openOfDefault(ele) + "\n" + breakAndIndentSingleNewlines(strip(middle), false) + closeOfDefault(ele);
+                        } else {
+                            acc += openOfDefault(ele) + middle + closeOfDefault(ele);
+                        }
                     }
 
                     lastWasCode = true;
@@ -141,11 +153,11 @@ function compile(indent: number, inline: boolean, block: boolean, level: Level, 
             }
         }
     }
-    if(acc !== undefined && (acc as string).length > 0) {
+    if(isNonEmpty(acc)) {
         if(level.canBeParentOf(LEVEL_INLINE)) 
-            code += acc as string;
+            code += strip(acc as string);
         else
-            code += genIndent(indent) + pTag(true) + "\n" + genIndent(indent + 1) + acc as string + "\n" + genIndent(indent) + pTag(false) + "\n";
+            code += pTag(true) + "\n" + breakAndIndentSingleNewlines(strip(acc as string), true) + pTag(false) + "\n";
     } 
     chapters.push(code);
     return chapters;
