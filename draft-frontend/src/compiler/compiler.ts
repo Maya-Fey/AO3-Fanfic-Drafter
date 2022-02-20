@@ -4,6 +4,9 @@ import { Fanfic } from "../fanfic/fanfiction";
 import { Document, Element, Text, DataNode } from "domhandler";
 import type { Node } from "domhandler"
 import { CompiledTemplate, FicTemplate } from "../fanfic/template";
+import { getLevelOf, isAllowedTag, isSelfClosing, Level, LEVEL_INLINE, LEVEL_ROOT } from "./tags";
+
+
 
 export class FicCompilerError {
     reason: string;
@@ -28,21 +31,23 @@ export function compileFanfic(fic: Fanfic, target: EditorTarget): string[]|FicCo
     });
 
     let dom: Document = parseDocument(fic.text);
-    return compile(0, false, true, dom.childNodes, compiledTemplates);
+    return compile(0, false, true, LEVEL_ROOT, dom.childNodes, compiledTemplates);
 }
 
 function genIndent(indent: number): string {
     return Array(indent + 1).join('\t');
 }
 
-function textTag(block: boolean, open: boolean): string {
-    return block ? 
-        (open ? "<p>" : "</p>") :
-        (open ? "<span>" : "</span>)");
+function pTag(open: boolean): string {
+    return (open ? "<p>" : "</p>");
 }
 
 function openOfDefault(tag: Element) {
     return "<" + tag.tagName + (tag.attributes.length > 0 ? " " : "") + tag.attributes.map(att=>{return att.name + "=\"" + att.value + "\""}).join(" ") + ">";
+}
+
+function selfClosing(tag: Element) {
+    return "<" + tag.tagName + (tag.attributes.length > 0 ? " " : "") + tag.attributes.map(att=>{return att.name + "=\"" + att.value + "\""}).join(" ") + "/>";
 }
 
 function closeOfDefault(tag: Element) {
@@ -58,7 +63,7 @@ function strip(s: string): string {
         return s;
 }
 
-function compile(indent: number, inline: boolean, block: boolean, nodes: Node[], compiledTemplates: Map<string, CompiledTemplate>): string[]|FicCompilerError
+function compile(indent: number, inline: boolean, block: boolean, level: Level, nodes: Node[], compiledTemplates: Map<string, CompiledTemplate>): string[]|FicCompilerError
 {
     let chapters: string[] = [];
     let code: string = "";
@@ -71,10 +76,6 @@ function compile(indent: number, inline: boolean, block: boolean, nodes: Node[],
             let tN: Text = node as Text;
             let lines: string[] = tN.data.split("\n\n").map(strip);
 
-            if(inline && lines.length > 1) {
-                return new FicCompilerError("Illegal line break in inline tag" + tN.startIndex);
-            } 
-
             lines.forEach(line=>{
                 if(lastWasCode) {
                     lastWasCode = false;
@@ -82,10 +83,10 @@ function compile(indent: number, inline: boolean, block: boolean, nodes: Node[],
                 } else {
                     let accNotEmpty: boolean = acc !== undefined && acc.length > 0;
                     if(accNotEmpty) {
-                        if(inline) 
+                        if(level.canBeParentOf(LEVEL_INLINE)) 
                             code += acc as string;
                         else
-                            code += genIndent(indent) + textTag(block, true) + "\n" + genIndent(indent + 1) + acc as string + "\n" + genIndent(indent) + textTag(block, false) + "\n";
+                            code += genIndent(indent) + pTag(true) + "\n" + genIndent(indent + 1) + acc as string + "\n" + genIndent(indent) + pTag(false) + "\n";
                     } 
                     if(line.startsWith("#############")) {    
                         if(indent != 0) {
@@ -104,28 +105,47 @@ function compile(indent: number, inline: boolean, block: boolean, nodes: Node[],
             let ele: Element = node as Element;
             if(compiledTemplates.has(ele.tagName)) {
 
-            } else {
-                if((acc === undefined || (acc as string).length === 0) && (next instanceof Text && (next as Text).data.startsWith("\n\n"))) {
-                    let ret: string[]|FicCompilerError = compile(indent + 1, false, block && indent == 0, ele.childNodes, compiledTemplates);
+            } else if(isAllowedTag(ele.tagName)) {
+                let nLevel: Level|undefined = getLevelOf(ele.tagName);
+                if(nLevel === undefined) {
+                    return new FicCompilerError("Tag <" + ele.tagName + "> is allowed on AO3, but is not supported by this compiler yet. Ooops. sorry.");
+                }
+
+                if(nLevel !== LEVEL_INLINE) {
+                    if(acc !== undefined && acc.length > 0) { return new FicCompilerError("Block-level tags should be on their own line"); }
+
+                    let ret: string[]|FicCompilerError = compile(indent + 1, false, true, nLevel, ele.childNodes, compiledTemplates);
                     if(ret instanceof FicCompilerError) return ret;
                     let middle = (ret as string[])[0];
-                    code += genIndent(indent) + openOfDefault(ele) + "\n" + middle + genIndent(indent) + closeOfDefault(ele) + "\n";
+                    if(isSelfClosing(ele.tagName)) {
+                        code += genIndent(indent) + selfClosing(ele) + "\n";
+                    } else {
+                        code += genIndent(indent) + openOfDefault(ele) + "\n" + middle + genIndent(indent) + closeOfDefault(ele) + "\n";
+                    }
                 } else {
-                    let ret: string[]|FicCompilerError = compile(-1, true, false, ele.childNodes, compiledTemplates);
+                    let ret: string[]|FicCompilerError = compile(-1, true, false, nLevel, ele.childNodes, compiledTemplates);
                     if(ret instanceof FicCompilerError) return ret;
                     let middle = (ret as string[])[0];
                     acc = acc === undefined ? "" : acc as string;
-                    acc += openOfDefault(ele) + middle + closeOfDefault(ele);
+                    
+                    if(isSelfClosing(ele.tagName)) {
+                        acc += selfClosing(ele);
+                    } else {
+                        acc += openOfDefault(ele) + middle + closeOfDefault(ele);
+                    }
+
                     lastWasCode = true;
                 }
+            } else {
+                return new FicCompilerError("Tag <" + ele.tagName + "> is not a template and not allowed on AO3.");
             }
         }
     }
     if(acc !== undefined && (acc as string).length > 0) {
-        if(inline) 
+        if(level.canBeParentOf(LEVEL_INLINE)) 
             code += acc as string;
         else
-            code += genIndent(indent) + textTag(block, true) + "\n" + genIndent(indent + 1) + acc as string + "\n" + genIndent(indent) + textTag(block, false) + "\n";
+            code += genIndent(indent) + pTag(true) + "\n" + genIndent(indent + 1) + acc as string + "\n" + genIndent(indent) + pTag(false) + "\n";
     } 
     chapters.push(code);
     return chapters;
