@@ -7,7 +7,7 @@ interface TabSelectorProps<Props extends React.HTMLProps<HTMLDivElement>, Enum> 
 export function TabSelector<Props extends React.HTMLProps<HTMLDivElement>, Enum>(props: TabSelectorProps<Props, Enum>): JSX.Element {
     let eles: JSX.Element[] = [];
     props.ctx.tabs.forEach((val, key)=>{
-        eles.push(<TabSelectorButton className="tabbed-window__tab-selector-button" enabled={key!=props.ctx.currentTabId()} name={String(key)} setTab={()=>{props.ctx.setCurrentTab(key);}}/>);
+        eles.push(<TabSelectorButton key={String(key)} className="tabbed-window__tab-selector-button" enabled={key!=props.ctx.currentTabId()} name={String(key)} setTab={()=>{props.ctx.setCurrentTab(key);}}/>);
     });
     return (
         <div className="tabbed-window__tab-selector">
