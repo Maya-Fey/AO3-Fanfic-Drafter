@@ -72,6 +72,10 @@ function isNonEmpty(s: string|undefined): boolean {
     return s !== undefined && (strip(s).length > 0);
 }
 
+function htmlEntities(s: string): string {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function compile(indent: number, level: Level, nodes: Node[], compiledTemplates: Map<string, CompiledTemplate>): string[]|FicCompilerError
 {
     let chapters: string[] = [];
@@ -82,7 +86,7 @@ function compile(indent: number, level: Level, nodes: Node[], compiledTemplates:
         let node: Node = nodes[i];
         if(node instanceof Text) {
             let tN: Text = node as Text;
-            let lines: string[] = rmTabs(tN.data).split("\n\n");
+            let lines: string[] = htmlEntities(rmTabs(tN.data)).split("\n\n");
 
             lines.forEach(line=>{
                 if(lastWasCode) {
