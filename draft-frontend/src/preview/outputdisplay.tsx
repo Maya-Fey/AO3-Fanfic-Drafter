@@ -54,7 +54,7 @@ export class OutputDisplayTab implements Tab<PreviewTabProps> {
 
     chapterSelector: (props: ChapterSelectorProps)=>JSX.Element = (props: ChapterSelectorProps)=>{
         let items: JSX.Element[] = [];
-        props.map.forEach((_v, k)=>{ items.push(<this.ChapterSelectorItem value={k}/>) })
+        props.map.forEach((_v, k)=>{ items.push(<this.ChapterSelectorItem key={k} value={k}/>) })
         return (
             <select className="compiler--output--selector" defaultValue={this.curChapter} onChange={(event: ChangeEvent<HTMLSelectElement>)=>{ this.switchToChapter(event.target.value); }}>
                 {items}
