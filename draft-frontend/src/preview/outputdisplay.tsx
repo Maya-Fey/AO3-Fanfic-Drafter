@@ -17,6 +17,7 @@ interface ChapterSelectorProps extends React.HTMLProps<HTMLSelectElement> {
 export class OutputDisplayTab implements Tab<PreviewTabProps> {
 
     editor: CodeMirror.EditorFromTextArea|undefined = undefined;
+    curChapter: string = "Placeholder";
     chapters: Map<string, string> = new Map<string, string>([[ "Placeholder", "Placeholder" ]]);
 
     render: (props: PreviewTabProps)=>JSX.Element = (props: PreviewTabProps)=>{
@@ -44,7 +45,7 @@ export class OutputDisplayTab implements Tab<PreviewTabProps> {
                     <ChapterSelector map={this.chapters}/>
                 </div>
                 <div className="compiler-output--code-container">
-                    <textarea defaultValue={this.chapters.get(this.chapters.keys().next().value)} ref={textRef}>
+                    <textarea defaultValue={this.chapters.get(this.curChapter)} ref={textRef}>
                     </textarea>
                 </div>
             </div>
@@ -55,23 +56,32 @@ export class OutputDisplayTab implements Tab<PreviewTabProps> {
         let items: JSX.Element[] = [];
         props.map.forEach((_v, k)=>{ items.push(<this.ChapterSelectorItem value={k}/>) })
         return (
-            <select className="compiler--output--selector" onChange={(event: ChangeEvent<HTMLSelectElement>)=>{ this.editor!.setValue(this.chapters.get(event.target.value)!)}}>
+            <select className="compiler--output--selector" defaultValue={this.curChapter} onChange={(event: ChangeEvent<HTMLSelectElement>)=>{ this.switchToChapter(event.target.value); }}>
                 {items}
             </select>
         )
     }
 
     ChapterSelectorItem(props: React.HTMLProps<HTMLOptionElement>): JSX.Element {
+        if(props.selected) console.log(props.value);
         return (
             <option key={props.value as string} {...props}>{props.value}</option>
         )
     }
 
+    switchToChapter(chapter: string) {
+        this.curChapter = chapter;
+        this.editor!.setValue(this.chapters.get(chapter)!);
+    }
+
     chaptersToMap(chapters: string[]|FicCompilerError): Map<string, string> {
         if(chapters instanceof FicCompilerError) {
+            this.curChapter = "Error";
             return new Map<string, string>([[ "Error", chapters.reason ]]);
         } else {
-            return new Map<string, string>(chapters.map((val, idx)=>[ "Chapter " + (idx + 1), val ]));
+            let cMap: Map<string, string> = new Map<string, string>(chapters.map((val, idx)=>[ "Chapter " + (idx + 1), val ]));
+            if(!cMap.has(this.curChapter)) this.curChapter = "Chapter 1";
+            return cMap;
         }
     }
 
