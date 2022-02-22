@@ -8,6 +8,7 @@ import { PreviewDisplayTab } from "./previewdisplay";
 import { observer } from "mobx-react";
 import { compileFanfic, FicCompilerError } from "../compiler/compiler";
 import { EditorTarget } from "../fanfic/editortarget";
+import { useEffect } from "react";
 
 enum PreviewTab {
     PREVIEW = "Preview",
@@ -26,6 +27,11 @@ export class PreviewContext {
     }
 }
 
+function hotUpdate(tabCtx: TabbedContext<PreviewTabProps, PreviewTab>) {
+    tabCtx.hotUpdate(PreviewTab.PREVIEW, new PreviewDisplayTab());
+    tabCtx.hotUpdate(PreviewTab.OUTPUT, new OutputDisplayTab());
+}
+
 interface PreviewProps extends React.HTMLProps<HTMLDivElement> {
     ctx: PreviewContext;
     targ: EditorTarget;
@@ -38,6 +44,9 @@ export interface PreviewTabProps extends PreviewProps {
 
 export const Preview = observer(function(props: PreviewProps) {
     let ret: string[]|FicCompilerError = compileFanfic(props.fic.fic, props.targ);
+    useEffect(()=>{
+        hotUpdate(props.ctx.tabCtx);
+    });
     return (
         <div className="preview">
             <TabbedWindow<PreviewTabProps, PreviewTab> ctx={props.ctx.tabCtx} props={{ ctx: props.ctx, targ: props.targ, fic: props.fic, compiled: ret }}/>

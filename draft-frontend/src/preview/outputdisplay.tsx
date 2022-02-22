@@ -1,5 +1,5 @@
 import CodeMirror from "codemirror";
-import React, { ChangeEvent, ChangeEventHandler, useEffect, useRef } from "react";
+import React, { ChangeEvent, useEffect, useRef } from "react";
 import { FicCompilerError } from "../compiler/compiler";
 import { Tab } from "../tabs/TabbedContext";
 import { PreviewTabProps } from "./preview";
@@ -87,6 +87,12 @@ export class OutputDisplayTab implements Tab<PreviewTabProps> {
 
     onClose(): void {
         this.editor!.toTextArea();
+    }
+
+    hotUpdate(n: OutputDisplayTab): void {
+        this.editor = n.editor;
+        this.curChapter = n.curChapter;
+        this.chapters = n.chapters;
     }
     
 }

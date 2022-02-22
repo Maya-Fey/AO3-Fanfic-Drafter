@@ -1,4 +1,5 @@
 import CodeMirror from "codemirror"
+import { timingSafeEqual } from "node:crypto";
 import { useEffect, useRef } from "react";
 import { FanficContext } from "../App";
 import { Tab } from "../tabs/TabbedContext";
@@ -17,11 +18,10 @@ export class TextEditorTab implements Tab<EditorProps> {
 
     render: (props: EditorProps)=>JSX.Element = (props: EditorProps)=>{
         let textRef: React.RefObject<HTMLTextAreaElement> = useRef<HTMLTextAreaElement>(null as HTMLTextAreaElement|null);
-        
+
         this.ctx = props.fic;
-        
+
         useEffect(()=>{
-            console.log(textRef.current!);
             this.editor = CodeMirror.fromTextArea(textRef.current!, {
                 value: textRef.current!.value,
                 mode: "htmlmixed",
@@ -54,6 +54,11 @@ export class TextEditorTab implements Tab<EditorProps> {
         this.ctx!.fic.text = this.editor!.getValue();
         this.editor!.toTextArea();
         this.editor = undefined;
+    }
+
+    hotUpdate(n: TextEditorTab): void {
+        this.ctx = n.ctx;
+        this.editor = n.editor;
     }
     
 }

@@ -14,5 +14,7 @@ export class NotesTab implements Tab<EditorProps> {
     onClose(): void {
         //TODO: Save
     }
+
+    hotUpdate(n: NotesTab): void {}
     
 }

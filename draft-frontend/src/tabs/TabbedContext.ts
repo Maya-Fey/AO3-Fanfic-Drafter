@@ -23,11 +23,16 @@ export class TabbedContext<Props extends React.HTMLProps<HTMLDivElement>, Enum> 
         this.cur = nCur; 
     }
 
+    hotUpdate(key: Enum, value: Tab<Props>) {
+        value.hotUpdate(this.tabs.get(key)!);
+        this.tabs.set(key, value);
+    }
 
 }
 
 export interface Tab<Props extends React.HTMLProps<HTMLDivElement>> {
     render(props: Props): JSX.Element;
     onClose(): void;
+    hotUpdate(updated: this): void;
 }
 

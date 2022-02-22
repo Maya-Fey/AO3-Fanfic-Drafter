@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import { useEffect } from "react";
 import { FanficContext } from "../App";
 import { Tab, TabbedContext } from "../tabs/TabbedContext";
 import { TabbedWindow } from "../tabs/TabbedWindow";
@@ -28,12 +29,22 @@ export class EditorContext {
     }
 }
 
+function hotUpdate(tabCtx: TabbedContext<EditorProps, EditorTab>) {
+    tabCtx.hotUpdate(EditorTab.TEXT, new TextEditorTab());
+    tabCtx.hotUpdate(EditorTab.METADATA, new MetadataTab());
+    tabCtx.hotUpdate(EditorTab.TEMPLATES, new TemplatesTab());
+    tabCtx.hotUpdate(EditorTab.NOTES, new NotesTab());
+}
+
 export interface EditorProps extends React.HTMLProps<HTMLDivElement> {
     ctx: EditorContext;
     fic: FanficContext;
 }
 
 export function Editor(props: EditorProps) {
+    useEffect(()=>{
+        hotUpdate(props.ctx.tabCtx);
+    });
     return (
         <div className="editor">
             <TabbedWindow<EditorProps, EditorTab> ctx={props.ctx.tabCtx} props={props}/>

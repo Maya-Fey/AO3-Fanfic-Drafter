@@ -14,5 +14,7 @@ export class TemplatesTab implements Tab<EditorProps> {
     onClose(): void {
         //TODO: Save
     }
+
+    hotUpdate(n: TemplatesTab): void {}
     
 }

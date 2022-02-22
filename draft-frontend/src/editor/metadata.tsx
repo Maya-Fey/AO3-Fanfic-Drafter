@@ -14,5 +14,7 @@ export class MetadataTab implements Tab<EditorProps> {
     onClose(): void {
         //TODO: Save
     }
+
+    hotUpdate(n: MetadataTab): void {}
     
 }
