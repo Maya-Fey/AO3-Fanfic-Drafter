@@ -31,12 +31,11 @@ export class TextEditorTab implements Tab<EditorProps> {
                 lineWrapping: true
             });
 
-            let autosave = ()=>{
+            let autosaveHandle: NodeJS.Timeout = setInterval(()=>{
                 if(this.editor !== undefined) {
-                    props.fic.fic.text = this.editor.getValue();
+                    this.ctx!.fic.updateText(this.editor.getValue());
                 }
-            }
-            let autosaveHandle: NodeJS.Timeout = setInterval(autosave, 2000);
+            }, 2000);
             return ()=>{
                 clearInterval(autosaveHandle);
             }

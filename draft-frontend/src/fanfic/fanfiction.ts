@@ -77,4 +77,8 @@ export class Fanfic implements HasValidator {
 
         return { valid: true, validationReason: ""};
     }
+
+    updateText(newText: string): void {
+        this.text = newText;
+    }
 }
