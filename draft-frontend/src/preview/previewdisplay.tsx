@@ -14,5 +14,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
     onClose(): void {
         //TODO: Save
     }
+
+    hotUpdate(n: PreviewDisplayTab): void {}
     
 }
