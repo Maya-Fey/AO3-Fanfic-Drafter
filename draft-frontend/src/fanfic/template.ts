@@ -11,6 +11,16 @@ export class FicTemplate {
         this.key = key;
         makeAutoObservable(this);
     }
+
+    updateExample(newExample: string): void {
+        this.example = newExample;
+    }
+
+    updateSource(newSource: string, newStyle: string): void {
+        this.source = newSource;
+        this.style = newStyle;
+    }
+    
 }
 
 export class CompiledTemplate {

@@ -81,4 +81,14 @@ export class Fanfic implements HasValidator {
     updateText(newText: string): void {
         this.text = newText;
     }
+
+    getTemplateIfPresent(key: string, setter: ()=>FicTemplate): FicTemplate {
+        if(this.templates.has(key)) {
+            return this.templates.get(key)!;
+        } else {
+            let template: FicTemplate = setter();
+            this.templates.set(key, template);
+            return template;
+        }
+    }
 }

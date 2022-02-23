@@ -5,7 +5,7 @@ import { Tab, TabbedContext } from "../tabs/TabbedContext";
 import { TabbedWindow } from "../tabs/TabbedWindow";
 import { MetadataTab } from "./metadata";
 import { NotesTab } from "./notes";
-import { TemplatesTab } from "./templates";
+import { TemplateContext, TemplatesTab } from "./templates";
 import { TextEditorTab } from "./texteditor";
 
 enum EditorTab {
@@ -17,7 +17,8 @@ enum EditorTab {
 
 export class EditorContext {
     tabCtx: TabbedContext<EditorProps, EditorTab>;
-
+    templateCtx: TemplateContext = new TemplateContext();
+    
     constructor() {
         makeAutoObservable(this);
         let tabs: Map<EditorTab, Tab<EditorProps>> = new Map<EditorTab, Tab<EditorProps>>();
