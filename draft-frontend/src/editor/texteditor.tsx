@@ -2,6 +2,7 @@ import CodeMirror from "codemirror"
 import { timingSafeEqual } from "node:crypto";
 import { useEffect, useRef } from "react";
 import { FanficContext } from "../App";
+import { EditorTarget } from "../fanfic/editortarget";
 import { Tab } from "../tabs/TabbedContext";
 import { EditorProps } from "./editor";
 
@@ -40,6 +41,10 @@ export class TextEditorTab implements Tab<EditorProps> {
                 clearInterval(autosaveHandle);
             }
         }, [textRef]);
+
+        useEffect(()=>{
+            props.retarget.retarget(EditorTarget.targetFic());
+        });
         
         return (
             <div className="fic-editor">

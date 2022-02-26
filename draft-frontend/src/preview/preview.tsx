@@ -6,7 +6,7 @@ import { OutputDisplayTab } from "./outputdisplay";
 import { PreviewDisplayTab } from "./previewdisplay";
 
 import { observer } from "mobx-react";
-import { compileFanfic, FicCompilerError } from "../compiler/compiler";
+import { CompilerResult, compileTarget, FicCompilerError } from "../compiler/compiler";
 import { EditorTarget } from "../fanfic/editortarget";
 import { useEffect } from "react";
 
@@ -39,11 +39,11 @@ interface PreviewProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 export interface PreviewTabProps extends PreviewProps {
-    compiled: string[]|FicCompilerError
+    compiled: CompilerResult|FicCompilerError
 }
 
 export const Preview = observer(function(props: PreviewProps) {
-    let ret: string[]|FicCompilerError = compileFanfic(props.fic.fic, props.targ);
+    let ret: CompilerResult|FicCompilerError = compileTarget(props.fic.fic, props.targ);
     useEffect(()=>{
         hotUpdate(props.ctx.tabCtx);
     });

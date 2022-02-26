@@ -1,6 +1,6 @@
 import CodeMirror from "codemirror";
 import React, { ChangeEvent, useEffect, useRef } from "react";
-import { FicCompilerError } from "../compiler/compiler";
+import { CompilerResult, FicCompilerError } from "../compiler/compiler";
 import { Tab } from "../tabs/TabbedContext";
 import { PreviewTabProps } from "./preview";
 
@@ -74,12 +74,12 @@ export class OutputDisplayTab implements Tab<PreviewTabProps> {
         this.editor!.setValue(this.chapters.get(chapter)!);
     }
 
-    chaptersToMap(chapters: string[]|FicCompilerError): Map<string, string> {
+    chaptersToMap(chapters: CompilerResult|FicCompilerError): Map<string, string> {
         if(chapters instanceof FicCompilerError) {
             this.curChapter = "Error";
             return new Map<string, string>([[ "Error", chapters.reason ]]);
         } else {
-            let cMap: Map<string, string> = new Map<string, string>(chapters.map((val, idx)=>[ "Chapter " + (idx + 1), val ]));
+            let cMap: Map<string, string> = chapters.files;
             if(!cMap.has(this.curChapter)) this.curChapter = "Chapter 1";
             return cMap;
         }

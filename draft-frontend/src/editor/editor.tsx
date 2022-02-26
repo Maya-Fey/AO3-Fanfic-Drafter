@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { useEffect } from "react";
-import { FanficContext } from "../App";
+import { FanficContext, RetargetCapability } from "../App";
 import { Tab, TabbedContext } from "../tabs/TabbedContext";
 import { TabbedWindow } from "../tabs/TabbedWindow";
 import { MetadataTab } from "./metadata";
@@ -40,6 +40,7 @@ function hotUpdate(tabCtx: TabbedContext<EditorProps, EditorTab>) {
 export interface EditorProps extends React.HTMLProps<HTMLDivElement> {
     ctx: EditorContext;
     fic: FanficContext;
+    retarget: RetargetCapability;
 }
 
 export function Editor(props: EditorProps) {
