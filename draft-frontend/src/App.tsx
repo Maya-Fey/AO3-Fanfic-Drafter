@@ -13,10 +13,14 @@ export enum WindowFocus {
   PREVIEW_ONLY
 }
 
-export class AppContext {
+export interface RetargetCapability {
+  retarget(target: EditorTarget): void;
+}
+
+export class AppContext implements RetargetCapability {
   private focus: WindowFocus = WindowFocus.BOTH;
 
-  target: EditorTarget = new EditorTarget();
+  target: EditorTarget = EditorTarget.targetFic();
 
   editor: EditorContext = new EditorContext();
   preview: PreviewContext = new PreviewContext();
@@ -32,6 +36,11 @@ export class AppContext {
 
   getFocus(): WindowFocus {
     return this.focus;  
+  }
+
+  retarget(target: EditorTarget): void {
+    if(this.target.equals(target)) return;
+    this.target = target;
   }
 }
 
@@ -51,7 +60,7 @@ export const App = observer(()=>{
       <TopMenu ctx={ctx}/>
       <div className="app__main">
         <div className={"app__left-div " + focusClass(WindowFocus.EDITOR_ONLY, ctx.getFocus())}>
-          <Editor ctx={ctx.editor} fic={ctx.fic}/>
+          <Editor ctx={ctx.editor} fic={ctx.fic} retarget={ctx}/>
         </div>
         <div className={"app__right-div " + focusClass(WindowFocus.PREVIEW_ONLY, ctx.getFocus())}>
           <Preview ctx={ctx.preview} targ={ctx.target} fic={ctx.fic}/>
@@ -70,5 +79,3 @@ function focusClass(is: WindowFocus, current: WindowFocus) {
     return "app__window--minimized";
   }
 }
-
-export default App;

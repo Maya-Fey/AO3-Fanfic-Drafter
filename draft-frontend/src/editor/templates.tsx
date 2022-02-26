@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import React, { ButtonHTMLAttributes, ChangeEvent, useRef } from "react";
 import { useEffect } from "react";
 import { FanficContext } from "../App";
+import { EditorTarget } from "../fanfic/editortarget";
 import { Fanfic } from "../fanfic/fanfiction";
 import { FicTemplate } from "../fanfic/template";
 import { Tab, TabbedContext } from "../tabs/TabbedContext";
@@ -63,8 +64,7 @@ export class TemplatesTab implements Tab<EditorProps> {
 
     render: (props: EditorProps)=>JSX.Element = (props: EditorProps)=>{
         this.templateCtx = props.ctx.templateCtx;
-        let template: FicTemplate|undefined = props.fic.fic.templates.has("test") ? props.fic.fic.templates.get("test") : undefined;
-
+        
         useEffect(()=>{
             hotUpdate(this.templateCtx!.tabCtx)
         });
@@ -76,6 +76,11 @@ export class TemplatesTab implements Tab<EditorProps> {
                 this.setSelection(undefined);
             }
         } 
+
+        useEffect(()=>{
+            if(this.templateCtx!.selectedTemplate !== undefined)
+                props.retarget.retarget(EditorTarget.targetTemplate(this.templateCtx!.selectedTemplate!));
+        });
 
         return (
             <div className="template-tab">

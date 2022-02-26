@@ -6,8 +6,6 @@ import type { Node } from "domhandler"
 import { CompiledTemplate, FicTemplate } from "../fanfic/template";
 import { getLevelOf, isAllowedTag, isSelfClosing, Level, LEVEL_INLINE, LEVEL_ROOT } from "./tags";
 
-
-
 export class FicCompilerError {
     reason: string;
     constructor(reason: string) {
@@ -15,11 +13,28 @@ export class FicCompilerError {
     }
 }
 
+export interface CompilerResult {
+    files: Map<string, string>;
+    keyStylesheet: string;
+}
+
 function compileTemplate(template: FicTemplate): CompiledTemplate|FicCompilerError {
     return new CompiledTemplate("unimplemented", "* { display: none; }", (e: Element)=>{return "gay";});
 }
 
-export function compileFanfic(fic: Fanfic, target: EditorTarget): string[]|FicCompilerError {
+export function compileTarget(fic: Fanfic, target: EditorTarget): CompilerResult|FicCompilerError {
+    if(target.targetTemplate) {
+        if(!fic.templates.has(target.templateName)) return new FicCompilerError("No template of that name");
+        let template: FicTemplate = fic.templates.get(target.templateName)!;
+        let ret: CompiledTemplate|FicCompilerError = compileTemplate(template);
+        if(ret instanceof FicCompilerError) return ret;
+        return { files: new Map<string, string>([["example", "unimplemented"], ["stylesheet", ret.style]]), keyStylesheet: "stylesheet"}
+    } else {
+        return compileFanfic(fic);
+    }
+}
+
+function compileFanfic(fic: Fanfic): CompilerResult|FicCompilerError {
     let compiledTemplates: Map<string, CompiledTemplate> = new Map<string, CompiledTemplate>();
     fic.templates.forEach(v=>{
         let ret: CompiledTemplate|FicCompilerError = compileTemplate(v);
@@ -31,7 +46,21 @@ export function compileFanfic(fic: Fanfic, target: EditorTarget): string[]|FicCo
     });
 
     let dom: Document = parseDocument(fic.text);
-    return compile(0, LEVEL_ROOT, dom.childNodes, compiledTemplates);
+    let ret: string[]|FicCompilerError = compile(0, LEVEL_ROOT, dom.childNodes, compiledTemplates);
+    if(ret instanceof FicCompilerError) return ret;
+
+    let stylesheet: string = "";
+    compiledTemplates.forEach((template=>{
+        stylesheet += template.style;
+    }));
+
+    let files: Map<string, string> = new Map<string, string>();
+    ret.forEach((chapter, idx)=>{
+        files.set("Chapter " + idx, chapter);
+    });
+    files.set("stylesheet", stylesheet);
+
+    return {files: files, keyStylesheet: "stylesheet"};
 }
 
 function pTag(open: boolean): string {
