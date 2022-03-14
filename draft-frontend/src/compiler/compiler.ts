@@ -1,13 +1,13 @@
 import { parseDocument } from "htmlparser2";
 import { EditorTarget } from "../fanfic/editortarget";
 import { Fanfic } from "../fanfic/fanfiction";
-import { Document, Element, Text, DataNode } from "domhandler";
+import { Document, Element, Text } from "domhandler";
 import type { Node } from "domhandler"
-import { CompiledTemplate, FicTemplate } from "../fanfic/template";
+import { CompiledTemplate, compileTemplate, FicTemplate } from "../fanfic/template";
 import { getLevelOf, isAllowedTag, isSelfClosing, Level, LEVEL_INLINE, LEVEL_ROOT } from "./tags";
 
 export class FicCompilerError {
-    reason: string;
+    reason: string; 
     constructor(reason: string) {
         this.reason = reason;
     }
@@ -18,25 +18,29 @@ export interface CompilerResult {
     keyStylesheet: string;
 }
 
-function compileTemplate(template: FicTemplate): CompiledTemplate|FicCompilerError {
-    return new CompiledTemplate("unimplemented", "* { display: none; }", (e: Element)=>{return "gay";});
-}
-
 export function compileTarget(fic: Fanfic, target: EditorTarget): CompilerResult|FicCompilerError {
     if(target.targetTemplate) {
         if(!fic.templates.has(target.templateName)) return new FicCompilerError("No template of that name");
         let template: FicTemplate = fic.templates.get(target.templateName)!;
         let ret: CompiledTemplate|FicCompilerError = compileTemplate(template);
         if(ret instanceof FicCompilerError) return ret;
-        return { files: new Map<string, string>([["example", "unimplemented"], ["stylesheet", ret.style]]), keyStylesheet: "stylesheet"}
+
+        let exRes: CompilerResult|FicCompilerError = rawCompileFanfic(template.example, fic.templates);
+        if(exRes instanceof FicCompilerError) return new FicCompilerError("Error in example or other template: " + exRes.reason);
+
+        return { files: new Map<string, string>([["Example", exRes.files.get("Chapter 0")!], ["stylesheet", ret.style]]), keyStylesheet: "stylesheet"}
     } else {
         return compileFanfic(fic);
     }
 }
 
 function compileFanfic(fic: Fanfic): CompilerResult|FicCompilerError {
+    return rawCompileFanfic(fic.text, fic.templates);
+}
+
+function rawCompileFanfic(text: string, templates: Map<string, FicTemplate>): CompilerResult|FicCompilerError {
     let compiledTemplates: Map<string, CompiledTemplate> = new Map<string, CompiledTemplate>();
-    fic.templates.forEach(v=>{
+    templates.forEach(v=>{
         let ret: CompiledTemplate|FicCompilerError = compileTemplate(v);
         if(ret instanceof FicCompilerError) {
             return ret as FicCompilerError;
@@ -45,13 +49,17 @@ function compileFanfic(fic: Fanfic): CompilerResult|FicCompilerError {
         }
     });
 
-    let dom: Document = parseDocument(fic.text);
+    let dom: Document = parseDocument(text, {
+        withStartIndices: true,
+        withEndIndices: true
+    });
     let ret: string[]|FicCompilerError = compile(0, LEVEL_ROOT, dom.childNodes, compiledTemplates);
     if(ret instanceof FicCompilerError) return ret;
 
     let stylesheet: string = "";
     compiledTemplates.forEach((template=>{
-        stylesheet += template.style;
+        if(template.style.length > 0)
+            stylesheet += template.style + "\n\n";
     }));
 
     let files: Map<string, string> = new Map<string, string>();
@@ -144,7 +152,11 @@ function compile(indent: number, level: Level, nodes: Node[], compiledTemplates:
         } else if(node instanceof Element) {
             let ele: Element = node as Element;
             if(compiledTemplates.has(ele.tagName)) {
-
+                let newNodes: Node[] = compiledTemplates.get(ele.tagName)!.use(nodes[i] as Element);
+                nodes.splice(i, 1);
+                let right: Node[] = nodes.splice(i, nodes.length - i);
+                nodes = nodes.concat(newNodes).concat(right);
+                i--;
             } else if(isAllowedTag(ele.tagName)) {
                 let nLevel: Level|undefined = getLevelOf(ele.tagName);
                 if(nLevel === undefined) {

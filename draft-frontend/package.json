@@ -11,6 +11,9 @@
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
     "codemirror": "^5.65.1",
+    "css": "^3.0.0",
+    "css-select": "^4.2.1",
+    "domutils": "^2.8.0",
     "htmlparser2": "^6.1.0",
     "mobx": "^6.3.13",
     "mobx-react": "^7.2.1",
@@ -45,6 +48,8 @@
     ]
   },
   "devDependencies": {
-    "@types/codemirror": "^5.60.5"
+    "@types/codemirror": "^5.60.5",
+    "@types/css": "^0.0.33",
+    "fs": "*"
   }
 }
