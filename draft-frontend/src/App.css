@@ -214,6 +214,8 @@ span.tabbed-window__tab-selector-button {
   line-height: 1.286;
   font-family: 'Lucida Grande','Lucida Sans Unicode','GNU Unifont',Verdana,Helvetica,sans-serif;
   padding: 0.5em;
+  overflow-y: scroll;
+  height: 100%;
 }
 
 .gayo3 html, .gayo3 body, .gayo3 div, .gayo3 span, .gayo3 applet, .gayo3 object, .gayo3 iframe, .gayo3 h1, .gayo3 h2, .gayo3 h3, .gayo3 h4, .gayo3 h5, .gayo3 h6, .gayo3 p, .gayo3 blockquote, .gayo3 pre, .gayo3 a, .gayo3 abbr, .gayo3 acronym, .gayo3 address, .gayo3 big, .gayo3 cite, .gayo3 code, .gayo3 del, .gayo3 dfn, .gayo3 em, .gayo3 img, .gayo3 ins, .gayo3 kbd, .gayo3 q, .gayo3 s, .gayo3 samp, .gayo3 small, .gayo3 strike, .gayo3 strong, .gayo3 sub, .gayo3 sup, .gayo3 tt, .gayo3 var, .gayo3 dl, .gayo3 dt, .gayo3 dd, .gayo3 ol, .gayo3 ul, .gayo3 li, .gayo3 fieldset, .gayo3 form, .gayo3 label, .gayo3 legend, .gayo3 table, .gayo3 caption, .gayo3 tbody, .gayo3 tfoot, .gayo3 thead, .gayo3 tr, .gayo3 th, .gayo3 td {
@@ -449,4 +451,20 @@ span.tabbed-window__tab-selector-button {
   margin: 1.286em auto;
   padding: 0;
   line-height: 1.5;
+}
+
+.gayo3 .userstuff hr {
+  width: 33%;
+  margin: .875em auto 1.2525em auto;
+  border: 1px solid;
+}
+
+.gayo3 ul#skiplinks, .gayo3 .landmark, .gayo3 .landmark a, .gayo3 .index .heading.landmark {
+  font-size: 0;
+  line-height: 0;
+  height: 0;
+  margin: 0;
+  clear: both;
+  color: transparent;
+  opacity: 0;
 }
