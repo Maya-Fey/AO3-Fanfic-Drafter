@@ -50,6 +50,8 @@
   "devDependencies": {
     "@types/codemirror": "^5.60.5",
     "@types/css": "^0.0.33",
-    "fs": "*"
+    "@types/strftime": "^0.9.4",
+    "fs": "*",
+    "strftime": "^0.10.1"
   }
 }

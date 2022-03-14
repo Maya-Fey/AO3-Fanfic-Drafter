@@ -2,11 +2,11 @@ import { makeAutoObservable } from "mobx";
 import { FicTemplate } from "./template";
 
 export enum Rating {
-    NOT_RATED,
-    GENERAL_AUDIENCES,
-    TEEN,
-    MATURE,
-    EXPLICIT
+    NOT_RATED = "Not Rated",
+    GENERAL_AUDIENCES = "General Audiences",
+    TEEN = "Teen and Up Audiences",
+    MATURE = "Mature",
+    EXPLICIT = "Explicit"
 }
 
 export class ValidationResult {
@@ -29,6 +29,17 @@ export class ArchiveWarnings {
     graphicViolence: boolean = false;
     underage: boolean = false;
     rape: boolean = false;
+
+    toTags(): string[] {
+        let ret: string[] = [];
+        if(this.choseNotToUse) ret.push("Creator Chose Not To Use Archive Warnings");
+        if(this.majorDeath) ret.push("Major Character Death");
+        if(this.graphicViolence) ret.push("Graphic Depictions Of Violence");
+        if(this.underage) ret.push("Underage");
+        if(this.rape) ret.push("Rape/Non-Con");
+        if(ret.length === 0) ret.push("No Archive Warnings Apply");
+        return ret;
+    }
 }
 
 export class Categories {
@@ -36,8 +47,19 @@ export class Categories {
     fm: boolean = false;
     mm: boolean = false;
     multi: boolean = false;
-    gem: boolean = false;
+    gen: boolean = false;
     other: boolean = false;
+
+    toTags(): string[] {
+        let ret: string[] = [];
+        if(this.ff) ret.push("F/F");
+        if(this.fm) ret.push("F/M");
+        if(this.mm) ret.push("M/M");
+        if(this.multi) ret.push("Multi");
+        if(this.gen) ret.push("Gen");
+        if(this.other) ret.push("Other");
+        return ret;
+    }
 }
 
 export class Fanfic implements HasValidator {
