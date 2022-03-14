@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef } from "react";
+import { useEffect } from "react";
 import strftime from 'strftime';
 import { CompilerResult, FicCompilerError } from "../compiler/compiler";
 import { Fanfic } from "../fanfic/fanfiction";
@@ -8,10 +9,26 @@ import { PreviewTabProps } from "./preview";
 export const printT = strftime.timezone(0);
 
 export class PreviewDisplayTab implements Tab<PreviewTabProps> {
+
+    curChapter: string = "Placeholder";
+    chapters: Map<string, string> = new Map<string, string>([[ "Placeholder", "Placeholder" ]]);
     
-    render(props: PreviewTabProps): JSX.Element {
+    render: (props: PreviewTabProps)=>JSX.Element = (props: PreviewTabProps)=>{
+        let textRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null as HTMLDivElement|null);
+
         let fic: Fanfic = props.compiled instanceof FicCompilerError ? new Fanfic("Error") : props.fic.fic;
         if(props.compiled instanceof FicCompilerError) fic.summary = props.compiled.reason;
+
+        useEffect(()=>{
+            if(textRef.current !== undefined) {
+                if(props.compiled instanceof FicCompilerError) {
+                    textRef.current!.innerHTML = "-"       
+                } else {
+                    textRef.current!.innerHTML = props.compiled.files.get(props.compiled.files.keys().next().value)!;
+                }
+            }
+        });
+
         return (
             <div className="gayo3">
                 <div className="wrapper">
@@ -25,7 +42,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                         </ul>
                         </dd>
                         <dt className="warning tags">
-                            <a href="/tos_faq#tags">Archive Warning</a>:
+                            <a href="https://archiveofourown.org/tos_faq#tags">Archive Warning</a>:
                         </dt>
                         <dd className="warning tags">
                         <ul className="commas">
@@ -101,17 +118,20 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             </blockquote>
                         </div>
                     </div>
+                    <div id="chapters" role="article">
+                        <h3 className="landmark heading" id="work">Work Text:</h3>
+                        <div className="userstuff" ref={textRef}></div>
+                    </div>
                 </div>
             </div>
         )
     }
 
-    onClose(): void {
-        //TODO: Save
-    }
+    onClose(): void {}
 
     hotUpdate(n: PreviewDisplayTab): void {
-
+        this.curChapter = n.curChapter;
+        this.chapters = n.chapters;
     }
     
 }
