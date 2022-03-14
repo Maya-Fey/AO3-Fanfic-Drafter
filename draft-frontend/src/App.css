@@ -208,3 +208,245 @@ span.tabbed-window__tab-selector-button {
   vertical-align: middle;
   margin-left: 2px;
 }
+
+.gayo3 {
+  font-size: 0.875rem;
+  line-height: 1.286;
+  font-family: 'Lucida Grande','Lucida Sans Unicode','GNU Unifont',Verdana,Helvetica,sans-serif;
+  padding: 0.5em;
+}
+
+.gayo3 html, .gayo3 body, .gayo3 div, .gayo3 span, .gayo3 applet, .gayo3 object, .gayo3 iframe, .gayo3 h1, .gayo3 h2, .gayo3 h3, .gayo3 h4, .gayo3 h5, .gayo3 h6, .gayo3 p, .gayo3 blockquote, .gayo3 pre, .gayo3 a, .gayo3 abbr, .gayo3 acronym, .gayo3 address, .gayo3 big, .gayo3 cite, .gayo3 code, .gayo3 del, .gayo3 dfn, .gayo3 em, .gayo3 img, .gayo3 ins, .gayo3 kbd, .gayo3 q, .gayo3 s, .gayo3 samp, .gayo3 small, .gayo3 strike, .gayo3 strong, .gayo3 sub, .gayo3 sup, .gayo3 tt, .gayo3 var, .gayo3 dl, .gayo3 dt, .gayo3 dd, .gayo3 ol, .gayo3 ul, .gayo3 li, .gayo3 fieldset, .gayo3 form, .gayo3 label, .gayo3 legend, .gayo3 table, .gayo3 caption, .gayo3 tbody, .gayo3 tfoot, .gayo3 thead, .gayo3 tr, .gayo3 th, .gayo3 td {
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gayo3 blockquote, .gayo3 pre {
+  font: 1em 'Lucida Grande','Lucida Sans Unicode',Verdana,Helvetica,sans-serif;
+  margin: .643em;
+}
+
+.gayo3 blockquote p:first-child {
+  margin-top: 0;
+}
+
+.gayo3 blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.gayo3 p, .gayo3 li, .gayo3 dd, .gayo3 hr {
+  margin: .643em 0;
+}
+
+.gayo3 .wrapper {
+  box-shadow: 1px 1px 5px #aaa;
+}
+
+.gayo3 dl.meta {
+  border: 1px solid #ccc;
+  clear: right;
+  padding: 1.286em .75em;
+  position: relative;
+  overflow: hidden;
+}
+
+.gayo3 .meta dt {
+  min-width: 10.5em;
+  width: 25%;
+  float: left;
+  clear: left;
+}
+
+.gayo3 .meta .stats dl, .gayo3 .meta .stats dl dt:first-child, .gayo3 dl.meta dd ul li:first-child {
+  padding-left: 0;
+}
+
+.gayo3 .meta dd ul li {
+  display: inline;
+  margin: auto;
+}
+
+.gayo3 .meta dd {
+  width: 72.5%;
+  float: left;
+  margin: 0 0 .643em;
+}
+
+.gayo3 .commas li::after {
+  content: ", ";
+}
+
+.gayo3 .commas li:last-child::after, .gayo3 .commas li:only-child::after {
+  content: none;
+}
+
+.gayo3 .blurb li, .actions > *, .gayo3 .stats > *, .gayo3 .meta ul li {
+  list-style: none;
+  display: inline;
+  padding-left: .25em;
+}
+
+.gayo3 .tags li {
+  display: inline;
+  padding-left: 0;
+  padding-right: .25em;
+}
+
+.gayo3 .commas li {
+  display: inline;
+}
+
+.gayo3 .warning, .gayo3 .warnings, .gayo3 span.byline, .gayo3 a.user {
+  font-weight: bold;
+}
+
+.gayo3 a, .gayo3 a:link, .gayo3 a:visited:hover {
+  color: #111;
+  text-decoration: none;
+  border-bottom: 1px solid;
+}
+
+.gayo3 a:hover {
+  color: #999;
+}
+
+.gayo3 .meta .stats dl, .gayo3 .meta .stats dl dt:first-child, .gayo3 dl.meta dd ul li:first-child {
+  padding-left: 0;
+}
+
+.gayo3 .meta .stats dl {
+  float: left;
+  margin-top: 0;
+}
+
+.gayo3 dl.stats {
+  text-align: right;
+  background: none;
+  margin-top: .643em;
+  box-shadow: none;
+}
+
+.gayo3 .meta .stats dl dd, .gayo3 .meta .stats dl dt {
+  margin: 0 .375em auto 0;
+  width: auto;
+  min-width: 0;
+  clear: none;
+  float: left;
+}
+
+.gayo3 .mods li, .gayo3 dl.stats dt, .gayo3 dl.stats dd {
+  background: none;
+  width: auto;
+  min-width: 0;
+  display: inline;
+  clear: none;
+  float: none;
+  margin: auto;
+}
+
+.gayo3 a.tag {
+  color: #111;
+  line-height: 1.5;
+  text-decoration: none;
+  padding: 0;
+  border-bottom: 1px dotted;
+}
+
+.gayo3 a.tag:hover, .gayo3 .listbox .heading a.tag:visited:hover {
+  background: #900;
+  color: #fff;
+}
+
+.gayo3 #workskin {
+  font-size: 1.08em;
+  margin: auto;
+  padding: 0 .25em;
+  max-width: 72em;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+}
+
+.gayo3 div.preface {
+  margin: 1.5em 3em;
+  padding: .643em .643em 0;
+  float: none;
+}
+
+.gayo3 div.preface .title, .gayo3 div.preface .byline, .gayo3 div.preface .byline a {
+  border: 0;
+  text-align: center;
+  text-decoration: none;
+}
+
+.gayo3 .preface h2.title {
+  display: block;
+  border-bottom: 0;
+  clear: right;
+}
+
+.gayo3 .preface h3 {
+  background: transparent;
+  border-bottom: 1px solid;
+}
+
+.gayo3 h1, .gayo3 h2, .gayo3 h3, .gayo3 h4, .gayo3 h5, .gayo3 h6, .gayo3 .heading {
+  font-family: Georgia,serif;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.gayo3 h2 {
+  font-size: 2.143em;
+  line-height: 1;
+  margin: .429em 0;
+  display: inline;
+}
+
+.gayo3 h3 {
+  font-size: 1.286em;
+  line-height: 1;
+  margin: .5375em 0;
+}
+
+.gayo3 #workskin .module {
+  float: none;
+}
+
+.gayo3 .module, .gayo3 .index, .gayo3 .index .index {
+  position: relative;
+  width: auto;
+}
+
+.gayo3 div.preface .module {
+  float: none;
+  margin: 0;
+  padding: 0 0 .643em;
+  width: auto;
+}
+
+.gayo3 div.preface .notes, .gayo3 div.preface .summary, .gayo3 div.preface .series, .gayo3 div.preface .children {
+  min-height: 5em;
+}
+
+.gayo3 .userstuff {
+  word-wrap: break-word;
+}
+
+.gayo3 .preface blockquote {
+  border: 0;
+}
+
+.gayo3 .userstuff p {
+  margin: 1.286em auto;
+  padding: 0;
+  line-height: 1.5;
+}
