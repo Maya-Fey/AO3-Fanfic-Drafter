@@ -27,6 +27,7 @@ html, body, #root {
 
 .app__window--minimized {
   width: 5em;
+  position: relative;
 }
 
 .app__left-div {
@@ -174,4 +175,36 @@ span.tabbed-window__tab-selector-button {
   background-color: white;
   border: 1px solid grey;
   filter: drop-shadow(1px 1px grey);
+}
+
+.app__window--minimized .tabbed-window * {
+  overflow: hidden;
+}
+
+.app__window--minimized .tabbed-window__tab-selector {
+  filter: opacity(0);
+}
+
+.app__window--minimized .tabbed-window__open-tab > * {
+  filter: drop-shadow(1px 1px grey) blur(5px);
+}
+
+.app__minimized-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: inherit;
+}
+
+.app__minimized-overlay__anchor {
+  vertical-align: middle;
+  display: inline-block;
+  height: 100%;
+}
+
+.app__minimized-overlay__expand {
+  vertical-align: middle;
+  margin-left: 2px;
 }

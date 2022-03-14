@@ -1,5 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { observer } from 'mobx-react';
+import React from 'react';
+import { Context } from 'vm';
 import './App.css';
 import { Editor, EditorContext } from './editor/editor';
 import { EditorTarget } from './fanfic/editortarget';
@@ -61,14 +63,36 @@ export const App = observer(()=>{
       <div className="app__main">
         <div className={"app__left-div " + focusClass(WindowFocus.EDITOR_ONLY, ctx.getFocus())}>
           <Editor ctx={ctx.editor} fic={ctx.fic} retarget={ctx}/>
+          <MinimizedOverlay desired={WindowFocus.EDITOR_ONLY} ctx={ctx}></MinimizedOverlay>
         </div>
         <div className={"app__right-div " + focusClass(WindowFocus.PREVIEW_ONLY, ctx.getFocus())}>
           <Preview ctx={ctx.preview} targ={ctx.target} fic={ctx.fic}/>
+          <MinimizedOverlay desired={WindowFocus.PREVIEW_ONLY} ctx={ctx}></MinimizedOverlay>
         </div>
       </div>
     </div>
   );
 });
+
+interface MinimizedOverlayProps extends React.HTMLProps<HTMLDivElement> {
+  desired: WindowFocus,
+  ctx: AppContext
+};
+
+function MinimizedOverlay(props: MinimizedOverlayProps) {
+  if(props.desired == props.ctx.getFocus() || props.ctx.getFocus() == WindowFocus.BOTH) {
+    return <React.Fragment></React.Fragment>
+  } else {
+    return (
+      <div className="app__minimized-overlay">
+        <span className="app__minimized-overlay__anchor"></span>
+        <button className="app__minimized-overlay__expand" onClick={()=>{ctx.setFocus(WindowFocus.BOTH)}}>
+          Expand
+        </button>
+      </div>
+    )
+  }
+}
 
 function focusClass(is: WindowFocus, current: WindowFocus) {
   if(is == current) {
