@@ -22,7 +22,7 @@ export class OutputDisplayTab implements Tab<PreviewTabProps> {
 
     render: (props: PreviewTabProps)=>JSX.Element = (props: PreviewTabProps)=>{
         let textRef: React.RefObject<HTMLTextAreaElement> = useRef<HTMLTextAreaElement>(null as HTMLTextAreaElement|null);
-
+        
         this.chapters = this.chaptersToMap(props.compiled);
         
         useEffect(()=>{
@@ -78,11 +78,15 @@ export class OutputDisplayTab implements Tab<PreviewTabProps> {
         if(chapters instanceof FicCompilerError) {
             this.curChapter = "Error";
             return new Map<string, string>([[ "Error", chapters.reason ]]);
+        } else if(chapters.files === undefined) {
+            console.log("literally what");
+            this.curChapter = "Error";
+            return new Map<string, string>([[ "Error", "Hot update has created an inconsistent state" ]]);
         } else {
             let cMap: Map<string, string> = chapters.files;
-            if(!cMap.has(this.curChapter)) this.curChapter = "Chapter 1";
+            if(!cMap.has(this.curChapter)) this.curChapter = cMap.keys().next().value;
             return cMap;
-        }
+        } 
     }
 
     onClose(): void {
