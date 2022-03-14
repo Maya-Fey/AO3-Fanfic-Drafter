@@ -10,7 +10,7 @@ require('codemirror/theme/neat.css');
 require('codemirror/mode/htmlmixed/htmlmixed.js');
 require('codemirror/lib/codemirror.js');
 
-interface ChapterSelectorProps extends React.HTMLProps<HTMLSelectElement> {
+export interface ChapterSelectorProps extends React.HTMLProps<HTMLSelectElement> {
     map: Map<string, string>
 }
 
@@ -79,7 +79,6 @@ export class OutputDisplayTab implements Tab<PreviewTabProps> {
             this.curChapter = "Error";
             return new Map<string, string>([[ "Error", chapters.reason ]]);
         } else if(chapters.files === undefined) {
-            console.log("literally what");
             this.curChapter = "Error";
             return new Map<string, string>([[ "Error", "Hot update has created an inconsistent state" ]]);
         } else {
