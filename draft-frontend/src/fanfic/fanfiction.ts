@@ -30,6 +30,10 @@ export class ArchiveWarnings {
     underage: boolean = false;
     rape: boolean = false;
 
+    constructor() {
+        makeAutoObservable(this);
+    }
+
     toTags(): string[] {
         let ret: string[] = [];
         if(this.choseNotToUse) ret.push("Creator Chose Not To Use Archive Warnings");
@@ -49,6 +53,10 @@ export class Categories {
     multi: boolean = false;
     gen: boolean = false;
     other: boolean = false;
+
+    constructor() {
+        makeAutoObservable(this);
+    }
 
     toTags(): string[] {
         let ret: string[] = [];

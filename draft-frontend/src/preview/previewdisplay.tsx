@@ -16,6 +16,8 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
     chapters: Map<string, string> = new Map<string, string>([[ "Placeholder", "Placeholder" ]]);
     
     render: (props: PreviewTabProps)=>JSX.Element = (props: PreviewTabProps)=>{
+        let summaryRef: React.RefObject<HTMLParagraphElement> = useRef<HTMLParagraphElement>(null as HTMLParagraphElement|null);
+
         this.textRef = useRef<HTMLDivElement>(null as HTMLDivElement|null);
 
         let fic: Fanfic = props.compiled instanceof FicCompilerError ? new Fanfic("Error") : props.fic.fic;
@@ -23,7 +25,11 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
 
         this.chapters = this.chaptersToMap(props.compiled);
 
+        let observedSummary: string = fic.summary.replaceAll("\n", "<br>");
+
         useEffect(()=>{
+            summaryRef.current!.innerHTML = observedSummary;
+
             if(this.textRef!.current !== undefined) {
                 if(props.compiled instanceof FicCompilerError) {
                     this.textRef!.current!.innerHTML = "-"       
@@ -122,8 +128,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             <div className="summary module" role="complementary">
                             <h3 className="heading">Summary:</h3>
                                 <blockquote className="userstuff">
-                                    <p>
-                                        {fic.summary}
+                                    <p ref={summaryRef}>
                                     </p>
                                 </blockquote>
                             </div>
