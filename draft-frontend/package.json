@@ -23,11 +23,14 @@
     "typescript": "^4.5.5",
     "web-vitals": "^2.1.4"
   },
+  "main": "src/electron.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
+    "electron": "wait-on tcp:3000 && electron ."
   },
   "eslintConfig": {
     "extends": [
@@ -51,7 +54,11 @@
     "@types/codemirror": "^5.60.5",
     "@types/css": "^0.0.33",
     "@types/strftime": "^0.9.4",
+    "concurrently": "^7.0.0",
+    "electron": "^17.2.0",
+    "electron-is-dev": "^2.0.0",
     "fs": "*",
-    "strftime": "^0.10.1"
+    "strftime": "^0.10.1",
+    "wait-on": "^6.0.1"
   }
 }
