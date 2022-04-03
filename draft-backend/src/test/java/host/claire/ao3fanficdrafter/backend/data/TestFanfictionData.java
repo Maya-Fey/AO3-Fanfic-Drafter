@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestFanfictionData {
 	
-	private static final Supplier<Fanfiction> fanficSupplier = ()->new Fanfiction(DataTestHelper.genString(1000), DataTestHelper.genStringMap(10, 50, TestFanfictionTemplate.templateSupplier), TestFanfictionMetadata.metadataSupplier.get());
+	public static final Supplier<Fanfiction> fanficSupplier = ()->new Fanfiction(DataTestHelper.genString(1000), DataTestHelper.genStringMap(10, 50, TestFanfictionTemplate.templateSupplier), TestFanfictionMetadata.metadataSupplier.get());
 	
 	@Test
 	public void testSerializable() {

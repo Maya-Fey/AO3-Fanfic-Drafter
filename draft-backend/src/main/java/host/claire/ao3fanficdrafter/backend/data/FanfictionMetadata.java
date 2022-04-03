@@ -66,6 +66,17 @@ public class FanfictionMetadata {
 	public Map<String, Boolean> getWarnings() {
 		return warnings;
 	}
+	
+	/**
+	 * For testing
+	 */
+	public FanfictionMetadata withTitle(String title) {
+		return new FanfictionMetadata(title, this.getSummary(), 
+				this.getFandoms(), this.getShips(), 
+				this.getCharacters(), this.getTags(), 
+				this.getRating(), 
+				this.getCategories(), this.getWarnings());
+	}
 
 	@Override
 	public int hashCode() {
