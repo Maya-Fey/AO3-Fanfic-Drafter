@@ -15,6 +15,8 @@ import java.util.function.Supplier;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import host.claire.ao3fanficdrafter.backend.helper.NameConverter;
+
 public class DataTestHelper {
 	
 	static final Gson gson = new GsonBuilder().create();
@@ -33,9 +35,16 @@ public class DataTestHelper {
 	}
 	
 	public static String genString(int max) {
-		int len = rand.nextInt(max);
+		int len = 1 + rand.nextInt(max);
 		StringBuilder builder = new StringBuilder();
-		while(len-->0) builder.append((char) rand.nextInt() & 0x7FFF);
+		while(len-->0) {
+			char c = (char) (rand.nextInt() & 0x7FFF);
+			if(!NameConverter.validChar(c)) {
+				len++;
+				continue;
+			}
+			builder.append(c);
+		}
 		return builder.toString();
 	}
 	

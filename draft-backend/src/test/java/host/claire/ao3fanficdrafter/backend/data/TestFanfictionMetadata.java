@@ -88,7 +88,7 @@ public class TestFanfictionMetadata {
 	
 	private static final Random rand = new Random();
 	static final Supplier<FanfictionMetadata> metadataSupplier = ()->
-		new FanfictionMetadata(DataTestHelper.genString(100), DataTestHelper.genString(),
+		new FanfictionMetadata(DataTestHelper.genString(50), DataTestHelper.genString(),
 				DataTestHelper.genStringList(20, 100), DataTestHelper.genStringList(100, 100), DataTestHelper.genStringList(100, 100), DataTestHelper.genStringList(100, 100),
 				DataTestHelper.genString(10),
 				DataTestHelper.genStringMap(6, 50, ()->rand.nextBoolean()),
