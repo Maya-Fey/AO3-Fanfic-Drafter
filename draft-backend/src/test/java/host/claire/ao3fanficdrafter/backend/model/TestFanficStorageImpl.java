@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -45,10 +45,14 @@ public class TestFanficStorageImpl {
 				throw new RuntimeException(e);
 			}
 		}, TestFanfictionData.fanficSupplier, 20);
-		Files.walk(Paths.get(tmpDir.getPath()))
-	        .map(Path::toFile)
-	        .sorted((o1, o2) -> -o1.compareTo(o2))
-	        .forEach(File::delete);
+		FanficStorage storage2 = new FanficStorageImpl(tmpDir);
+		assertEquals(new HashSet<>(storage2.getAvailableFics()), new HashSet<>(storage.getAvailableFics()));
+		storage.getAvailableFics().stream().map(Try((String ficname)->storage2.read(ficname, "latest"))).forEach(Try(fanfic->{
+			if(!storage.read(fanfic.getMeta().getTitle(), "latest").equals(fanfic)) {
+				System.out.println();
+			}
+			assertEquals(storage.read(fanfic.getMeta().getTitle(), "latest"), fanfic);
+		}));
 	}
 	
 	@Test
@@ -67,10 +71,6 @@ public class TestFanficStorageImpl {
 				throw new RuntimeException(e);
 			}
 		}, TestFanfictionData.fanficSupplier, 20);
-		Files.walk(Paths.get(tmpDir.getPath()))
-	        .map(Path::toFile)
-	        .sorted((o1, o2) -> -o1.compareTo(o2))
-	        .forEach(File::delete);
 	}
 	
 	@Test 
@@ -97,10 +97,6 @@ public class TestFanficStorageImpl {
 				throw new RuntimeException(e);
 			}
 		}, TestFanfictionData.fanficSupplier, 4);
-		Files.walk(Paths.get(tmpDir.getPath()))
-	        .map(Path::toFile)
-	        .sorted((o1, o2) -> -o1.compareTo(o2))
-	        .forEach(File::delete);
 	}
 	
 	@Disabled	
@@ -128,21 +124,17 @@ public class TestFanficStorageImpl {
 				assertEquals(revisions, 
 						storage.getRevisionsForFic(fanfic.getMeta().getTitle()).stream()
 																			   .map(rev->rev.getHash())
-																			   .map(Try(hash->storage.read(shutUpFinals.getMeta().getTitle(), hash)))
+																			   .map(Try((String hash)->storage.read(shutUpFinals.getMeta().getTitle(), hash)))
 																			   .map(fic->fic.getText())
 																			   .collect(Collectors.toList()));
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}, TestFanfictionData.fanficSupplier, 4);
-		Files.walk(Paths.get(tmpDir.getPath()))
-	        .map(Path::toFile)
-	        .sorted((o1, o2) -> -o1.compareTo(o2))
-	        .forEach(File::delete);
 	}
 	
-	@AfterAll
-	public static void cleanup() throws IOException {
+	@AfterEach
+	public void cleanup() throws IOException {
 		if(new File("tmp").exists())
 			Files.walk(Paths.get(new File("tmp").getPath()))
 		        .map(Path::toFile)

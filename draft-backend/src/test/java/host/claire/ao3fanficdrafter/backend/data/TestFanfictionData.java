@@ -1,12 +1,25 @@
 package host.claire.ao3fanficdrafter.backend.data;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
 public class TestFanfictionData {
 	
-	public static final Supplier<Fanfiction> fanficSupplier = ()->new Fanfiction(DataTestHelper.genString(1000), DataTestHelper.genStringMap(10, 50, TestFanfictionTemplate.templateSupplier), TestFanfictionMetadata.metadataSupplier.get());
+	public static final Supplier<Fanfiction> fanficSupplier = ()->new Fanfiction(DataTestHelper.genString(1000), genTemplateMap(), TestFanfictionMetadata.metadataSupplier.get());
+	
+	private static final Map<String, FanfictionTemplate> genTemplateMap() {
+		int templates = new Random().nextInt(20);
+		Map<String, FanfictionTemplate> map = new HashMap<>();
+		while(templates-->0) {
+			FanfictionTemplate temp = TestFanfictionTemplate.templateSupplier.get();
+			map.put(temp.getKey(), temp);
+		}
+		return map;
+	}
 	
 	@Test
 	public void testSerializable() {
