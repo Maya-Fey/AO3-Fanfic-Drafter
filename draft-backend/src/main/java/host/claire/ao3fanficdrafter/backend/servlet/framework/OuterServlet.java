@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import host.claire.ao3fanficdrafter.backend.servlet.framework.virtual.IncomingPacket;
 import host.claire.ao3fanficdrafter.backend.servlet.framework.virtual.InnerServlet;
 import host.claire.ao3fanficdrafter.backend.servlet.framework.virtual.OutgoingPacket;
 
@@ -22,7 +23,7 @@ public abstract class OuterServlet extends HttpServlet {
 	
 	protected Gson gson = new GsonBuilder().create();
 	
-	protected abstract InnerServlet getInner();
+	protected abstract InnerServlet<IncomingPacket> getInner();
 	
 	@Override
 	protected final void doGet(@Nullable HttpServletRequest req, @Nullable HttpServletResponse resp) throws ServletException, IOException

@@ -1,9 +1,9 @@
 package host.claire.ao3fanficdrafter.backend.servlet.framework.virtual;
 
-public interface InnerServlet {
+public interface InnerServlet<T extends IncomingPacket>  {
 	
-	OutgoingPacket processRequest(IncomingPacket packet);
+	OutgoingPacket processRequest(T packet);
 	
-	<T extends IncomingPacket> Class<T> typeOfIncoming();
+	Class<T> typeOfIncoming();
 
 }
