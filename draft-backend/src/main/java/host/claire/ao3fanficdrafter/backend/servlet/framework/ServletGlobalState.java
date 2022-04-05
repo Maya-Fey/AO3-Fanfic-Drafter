@@ -8,7 +8,7 @@ import host.claire.ao3fanficdrafter.backend.model.virtual.FanficStorage;
 
 public class ServletGlobalState {
 	
-	public static final ServletGlobalState instance = new ServletGlobalState(new FanficStorageImpl(new File("fanfic")), code->true);
+	public static final ServletGlobalState instance = new ServletGlobalState(new FanficStorageImpl(new File("fanfic")), (String user, String code)->true);
 	
 	private final FanficStorage storage;
 	private final AuthenticationVerifier verify;
