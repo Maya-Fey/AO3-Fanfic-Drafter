@@ -21,11 +21,11 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
         this.textRef = useRef<HTMLDivElement>(null as HTMLDivElement|null);
 
         let fic: Fanfic = props.compiled instanceof FicCompilerError ? new Fanfic("Error") : props.fic.fic;
-        if(props.compiled instanceof FicCompilerError) fic.summary = props.compiled.reason;
+        if(props.compiled instanceof FicCompilerError) fic.meta.summary = props.compiled.reason;
 
         this.chapters = this.chaptersToMap(props.compiled);
 
-        let observedSummary: string = fic.summary.replaceAll("\n", "<br>");
+        let observedSummary: string = fic.meta.summary.replaceAll("\n", "<br>");
 
         useEffect(()=>{
             summaryRef.current!.innerHTML = observedSummary;
@@ -54,7 +54,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             </dt>
                             <dd className="rating tags">
                             <ul className="commas">
-                                <Tag last={true} tagName={String(fic.rating)}/>
+                                <Tag last={true} tagName={String(fic.meta.rating)}/>
                             </ul>
                             </dd>
                             <dt className="warning tags">
@@ -62,7 +62,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             </dt>
                             <dd className="warning tags">
                             <ul className="commas">
-                                <Tags tagNames={fic.warnings.toTags()}/>
+                                <Tags tagNames={fic.meta.warnings.toTags()}/>
                             </ul>
                             </dd>
                             <dt className="category tags">
@@ -70,7 +70,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             </dt>
                             <dd className="category tags">
                             <ul className="commas">
-                                <Tags tagNames={fic.categories.toTags()}/>
+                                <Tags tagNames={fic.meta.categories.toTags()}/>
                             </ul>
                             </dd>
                             <dt className="fandom tags">
@@ -78,7 +78,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             </dt>
                             <dd className="fandom tags">
                             <ul className="commas">
-                                <Tags tagNames={fic.fandoms}/>
+                                <Tags tagNames={fic.meta.fandoms}/>
                             </ul>
                             </dd>
                             <dt className="relationship tags">
@@ -86,7 +86,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             </dt>
                             <dd className="relationship tags">
                             <ul className="commas">
-                                <Tags tagNames={fic.ships}/>
+                                <Tags tagNames={fic.meta.ships}/>
                             </ul>
                             </dd>
                             <dt className="character tags">
@@ -94,7 +94,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             </dt>
                             <dd className="character tags">
                             <ul className="commas">
-                                <Tags tagNames={fic.characters}/>
+                                <Tags tagNames={fic.meta.characters}/>
                             </ul>
                             </dd>
                             <dt className="freeform tags">
@@ -102,7 +102,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                             </dt>
                             <dd className="freeform tags">
                             <ul className="commas">
-                                <Tags tagNames={fic.tags}/>
+                                <Tags tagNames={fic.meta.tags}/>
                             </ul>
                             </dd>
                             <dt className="language">
@@ -120,7 +120,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                     <div id="workskin">
                         <div className="preface group">
                             <h2 className="title heading">
-                                {fic.title}
+                                {fic.meta.title}
                             </h2>
                             <h3 className="byline heading">
                                 <a rel="author" href="">You</a>
