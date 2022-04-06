@@ -63,15 +63,17 @@ export class TemplatesTab implements Tab<EditorProps> {
     }
 
     render: (props: EditorProps)=>JSX.Element = (props: EditorProps)=>{
+        let fic: Fanfic = props.fic.fic as Fanfic;
+
         this.templateCtx = props.ctx.templateCtx;
         
         useEffect(()=>{
             hotUpdate(this.templateCtx!.tabCtx)
         });
 
-        if(!(this.templateCtx!.selectedTemplate !== undefined && props.fic.fic.templates.has(this.templateCtx!.selectedTemplate))) {
-            if(props.fic.fic.templates.size > 0) {
-                this.setSelection(props.fic.fic.templates.keys().next().value);
+        if(!(this.templateCtx!.selectedTemplate !== undefined && fic.templates.has(this.templateCtx!.selectedTemplate))) {
+            if(fic.templates.size > 0) {
+                this.setSelection(fic.templates.keys().next().value);
             } else if(this.templateCtx!.selectedTemplate !== undefined) {
                 this.setSelection(undefined);
             }
@@ -85,9 +87,9 @@ export class TemplatesTab implements Tab<EditorProps> {
         return (
             <div className="template-tab">
                 <div className="template-tab__template-manager">
-                    <this.templateManagement fic={props.fic.fic}/>
+                    <this.templateManagement fic={fic}/>
                 </div>
-                <TabbedWindow<TemplateProps, TemplateTab> ctx={this.templateCtx.tabCtx} props={ { ctx: this.templateCtx, fic: props.fic, template: props.fic.fic.templates.get(this.templateCtx.selectedTemplate!)} }/>
+                <TabbedWindow<TemplateProps, TemplateTab> ctx={this.templateCtx.tabCtx} props={ { ctx: this.templateCtx, fic: props.fic, template: fic.templates.get(this.templateCtx.selectedTemplate!)} }/>
             </div>
         );
     }

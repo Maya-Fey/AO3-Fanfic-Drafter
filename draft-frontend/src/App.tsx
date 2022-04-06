@@ -47,7 +47,7 @@ export class AppContext implements RetargetCapability {
 }
 
 export class FanficContext {
-  fic: Fanfic = new Fanfic("New Fanfic");
+  fic: Fanfic|undefined = undefined;
 
   constructor() {
     makeAutoObservable(this);
@@ -60,18 +60,31 @@ export const App = observer(()=>{
   return (
     <div className="app">
       <TopMenu ctx={ctx}/>
-      <div className="app__main">
-        <div className={"app__left-div " + focusClass(WindowFocus.EDITOR_ONLY, ctx.getFocus())}>
-          <Editor ctx={ctx.editor} fic={ctx.fic} retarget={ctx}/>
-          <MinimizedOverlay desired={WindowFocus.EDITOR_ONLY} ctx={ctx}></MinimizedOverlay>
-        </div>
-        <div className={"app__right-div " + focusClass(WindowFocus.PREVIEW_ONLY, ctx.getFocus())}>
-          <Preview ctx={ctx.preview} targ={ctx.target} fic={ctx.fic}/>
-          <MinimizedOverlay desired={WindowFocus.PREVIEW_ONLY} ctx={ctx}></MinimizedOverlay>
-        </div>
-      </div>
+      <AppInner/>
     </div>
   );
+});
+
+export const AppInner = observer(()=>{
+  if(ctx.fic.fic === undefined) {
+    return (<div className="app__nofic">
+      <span className="app__nofic__anchor"></span>
+      <span className="app__nofic__showtext">No fanfiction to display. Please log in to a server</span>    
+    </div>);
+  } else {
+    return (
+      <div className="app__main">
+          <div className={"app__left-div " + focusClass(WindowFocus.EDITOR_ONLY, ctx.getFocus())}>
+            <Editor ctx={ctx.editor} fic={ctx.fic} retarget={ctx}/>
+            <MinimizedOverlay desired={WindowFocus.EDITOR_ONLY} ctx={ctx}></MinimizedOverlay>
+          </div>
+          <div className={"app__right-div " + focusClass(WindowFocus.PREVIEW_ONLY, ctx.getFocus())}>
+            <Preview ctx={ctx.preview} targ={ctx.target} fic={ctx.fic}/>
+            <MinimizedOverlay desired={WindowFocus.PREVIEW_ONLY} ctx={ctx}></MinimizedOverlay>
+          </div>
+        </div>
+    );
+  }
 });
 
 interface MinimizedOverlayProps extends React.HTMLProps<HTMLDivElement> {

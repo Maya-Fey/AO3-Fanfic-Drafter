@@ -45,6 +45,25 @@ html, body, #root {
   vertical-align: top;
 }
 
+.app__nofic {
+  height: 100%;
+  padding: 1em;
+  width: 100%;
+}
+
+.app__nofic__anchor {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.app__nofic__showtext {
+  vertical-align: middle;
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+}
+
 .top-menu {
   height: 2.5em;
   padding: 1em 1em 0em 1em;

@@ -20,7 +20,7 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
 
         this.textRef = useRef<HTMLDivElement>(null as HTMLDivElement|null);
 
-        let fic: Fanfic = props.compiled instanceof FicCompilerError ? new Fanfic("Error") : props.fic.fic;
+        let fic: Fanfic = props.compiled instanceof FicCompilerError ? new Fanfic("Error") : props.fic.fic as Fanfic;
         if(props.compiled instanceof FicCompilerError) fic.meta.summary = props.compiled.reason;
 
         this.chapters = this.chaptersToMap(props.compiled);
