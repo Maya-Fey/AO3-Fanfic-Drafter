@@ -12,6 +12,14 @@
         <servlet-name>NewFicServlet</servlet-name>
         <url-pattern>/newfic</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>ReadFicServlet</servlet-name>
+        <servlet-class>host.claire.ao3fanficdrafter.backend.servlet.ReadFicServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReadFicServlet</servlet-name>
+        <url-pattern>/read</url-pattern>
+    </servlet-mapping>
     
    
 </web-app>
