@@ -70,7 +70,7 @@ export class Categories {
     }
 }
 
-export class Fanfic implements HasValidator {
+export class FanficMetadata implements HasValidator {
     title: string;
     rating: Rating = Rating.NOT_RATED;
     categories: Categories = new Categories();
@@ -82,10 +82,6 @@ export class Fanfic implements HasValidator {
     ships: string[] = [];
     characters: string[] = [];
     tags: string[] = [];
-
-    text = "";
-
-    templates: Map<string, FicTemplate> = new Map<string, FicTemplate>();
 
     constructor(title: string) {
         this.title = title;
@@ -101,11 +97,21 @@ export class Fanfic implements HasValidator {
             return { valid: false, validationReason: "Must have at least one fandom" };
         }
 
-        if(this.text.length < 10) {
-            return { valid: false, validationReason: "Must have at least some text" };
-        }
-
         return { valid: true, validationReason: ""};
+    }
+}
+
+export class Fanfic {
+    
+    text: string = "";
+
+    templates: Map<string, FicTemplate> = new Map<string, FicTemplate>();
+
+    meta: FanficMetadata;
+
+    constructor(title: string) {
+        this.meta = new FanficMetadata(title);
+        makeAutoObservable(this);
     }
 
     updateText(newText: string): void {
