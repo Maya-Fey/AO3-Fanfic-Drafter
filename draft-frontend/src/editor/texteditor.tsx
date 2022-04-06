@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { useEffect, useRef } from "react";
 import { FanficContext } from "../App";
 import { EditorTarget } from "../fanfic/editortarget";
+import type { Fanfic } from "../fanfic/fanfiction";
 import { Tab } from "../tabs/TabbedContext";
 import { EditorProps } from "./editor";
 
@@ -34,7 +35,7 @@ export class TextEditorTab implements Tab<EditorProps> {
 
             let autosaveHandle: NodeJS.Timeout = setInterval(()=>{
                 if(this.editor !== undefined) {
-                    this.ctx!.fic.updateText(this.editor.getValue());
+                    this.ctx!.fic!.updateText(this.editor.getValue());
                 }
             }, 2000);
             return ()=>{
@@ -48,14 +49,14 @@ export class TextEditorTab implements Tab<EditorProps> {
         
         return (
             <div className="fic-editor">
-                <textarea defaultValue={this.ctx.fic.text} ref={textRef}>
+                <textarea defaultValue={this.ctx.fic!.text} ref={textRef}>
                 </textarea>
             </div>
         )
     }
 
     onClose(): void {
-        this.ctx!.fic.text = this.editor!.getValue();
+        this.ctx!.fic!.text = this.editor!.getValue();
         this.editor!.toTextArea();
         this.editor = undefined;
     }

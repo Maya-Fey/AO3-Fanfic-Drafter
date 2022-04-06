@@ -14,13 +14,15 @@ export class MetadataTab implements Tab<EditorProps> {
         let titleField: React.RefObject<HTMLInputElement> = useRef<HTMLInputElement>(null as HTMLInputElement|null);
         let summaryField: React.RefObject<HTMLTextAreaElement> = useRef<HTMLTextAreaElement>(null as HTMLTextAreaElement|null);
 
+        let fic: Fanfic = props.fic.fic as Fanfic;
+
         useEffect(()=>{
-            fandomsField.current!.value = this.unparseTags(props.fic.fic.meta.fandoms);
-            shipsField.current!.value = this.unparseTags(props.fic.fic.meta.ships);
-            characterField.current!.value = this.unparseTags(props.fic.fic.meta.characters);
-            tagsField.current!.value = this.unparseTags(props.fic.fic.meta.tags);
-            titleField.current!.value = props.fic.fic.meta.title;
-            summaryField.current!.value = props.fic.fic.meta.summary;
+            fandomsField.current!.value = this.unparseTags(fic.meta.fandoms);
+            shipsField.current!.value = this.unparseTags(fic.meta.ships);
+            characterField.current!.value = this.unparseTags(fic.meta.characters);
+            tagsField.current!.value = this.unparseTags(fic.meta.tags);
+            titleField.current!.value = fic.meta.title;
+            summaryField.current!.value = fic.meta.summary;
         });
 
         return (
@@ -33,7 +35,7 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td className="metadata-edit__rating-selector">
-                            <RatingSelector fic={props.fic.fic}/>
+                            <RatingSelector fic={fic}/>
                         </td>
                     </tr>
                     <tr>
@@ -43,11 +45,11 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td className="metadata-edit__warning-selector">
-                            <input id="chosenottouse" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.warnings.choseNotToUse = !props.fic.fic.meta.warnings.choseNotToUse)} defaultChecked={props.fic.fic.meta.warnings.choseNotToUse}/><label htmlFor="chosenottouse">Creator Chose Not to Use Archive Warnings</label>
-                            <input id="death" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.warnings.majorDeath = !props.fic.fic.meta.warnings.majorDeath)} defaultChecked={props.fic.fic.meta.warnings.majorDeath}/><label htmlFor="death">Major Character Death</label>
-                            <input id="violence" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.warnings.graphicViolence = !props.fic.fic.meta.warnings.graphicViolence)} defaultChecked={props.fic.fic.meta.warnings.graphicViolence}/><label htmlFor="violence">Grahic Depictions of Violence</label>
-                            <input id="rape" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.warnings.rape = !props.fic.fic.meta.warnings.rape)} defaultChecked={props.fic.fic.meta.warnings.rape}/><label htmlFor="rape">Rape/Non-Con</label>
-                            <input id="underage" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.warnings.underage = !props.fic.fic.meta.warnings.underage)} defaultChecked={props.fic.fic.meta.warnings.underage}/><label htmlFor="underage">Underage</label>
+                            <input id="chosenottouse" type="checkbox" onChange={action((_e)=>fic.meta.warnings.choseNotToUse = !fic.meta.warnings.choseNotToUse)} defaultChecked={fic.meta.warnings.choseNotToUse}/><label htmlFor="chosenottouse">Creator Chose Not to Use Archive Warnings</label>
+                            <input id="death" type="checkbox" onChange={action((_e)=>fic.meta.warnings.majorDeath = !fic.meta.warnings.majorDeath)} defaultChecked={fic.meta.warnings.majorDeath}/><label htmlFor="death">Major Character Death</label>
+                            <input id="violence" type="checkbox" onChange={action((_e)=>fic.meta.warnings.graphicViolence = !fic.meta.warnings.graphicViolence)} defaultChecked={fic.meta.warnings.graphicViolence}/><label htmlFor="violence">Grahic Depictions of Violence</label>
+                            <input id="rape" type="checkbox" onChange={action((_e)=>fic.meta.warnings.rape = !fic.meta.warnings.rape)} defaultChecked={fic.meta.warnings.rape}/><label htmlFor="rape">Rape/Non-Con</label>
+                            <input id="underage" type="checkbox" onChange={action((_e)=>fic.meta.warnings.underage = !fic.meta.warnings.underage)} defaultChecked={fic.meta.warnings.underage}/><label htmlFor="underage">Underage</label>
                         </td>
                     </tr>
                     <tr>
@@ -57,7 +59,7 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td>
-                            <textarea className="metadata-edit__tag-textarea metadata-edit__fandoms-textarea" onChange={action((e)=>{props.fic.fic.meta.fandoms = this.parseTags(fandomsField.current!.value);})}ref={fandomsField}></textarea>
+                            <textarea className="metadata-edit__tag-textarea metadata-edit__fandoms-textarea" onChange={action((e)=>{fic.meta.fandoms = this.parseTags(fandomsField.current!.value);})}ref={fandomsField}></textarea>
                         </td>
                     </tr>
                     <tr>
@@ -67,12 +69,12 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td className="metadata-edit__category-selector">
-                            <input id="ff" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.categories.ff = !props.fic.fic.meta.categories.ff)} defaultChecked={props.fic.fic.meta.categories.ff}/><label htmlFor="ff">F/F</label>
-                            <input id="fm" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.categories.fm = !props.fic.fic.meta.categories.fm)} defaultChecked={props.fic.fic.meta.categories.fm}/><label htmlFor="fm">F/M</label>
-                            <input id="mm" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.categories.mm = !props.fic.fic.meta.categories.mm)} defaultChecked={props.fic.fic.meta.categories.mm}/><label htmlFor="mm">M/M</label>
-                            <input id="multi" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.categories.multi = !props.fic.fic.meta.categories.multi)} defaultChecked={props.fic.fic.meta.categories.multi}/><label htmlFor="multi">Multi</label>
-                            <input id="gen" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.categories.gen = !props.fic.fic.meta.categories.gen)} defaultChecked={props.fic.fic.meta.categories.gen}/><label htmlFor="gen">Gen</label>
-                            <input id="other" type="checkbox" onChange={action((_e)=>props.fic.fic.meta.categories.other = !props.fic.fic.meta.categories.other)} defaultChecked={props.fic.fic.meta.categories.other}/><label htmlFor="other">Other</label>
+                            <input id="ff" type="checkbox" onChange={action((_e)=>fic.meta.categories.ff = !fic.meta.categories.ff)} defaultChecked={fic.meta.categories.ff}/><label htmlFor="ff">F/F</label>
+                            <input id="fm" type="checkbox" onChange={action((_e)=>fic.meta.categories.fm = !fic.meta.categories.fm)} defaultChecked={fic.meta.categories.fm}/><label htmlFor="fm">F/M</label>
+                            <input id="mm" type="checkbox" onChange={action((_e)=>fic.meta.categories.mm = !fic.meta.categories.mm)} defaultChecked={fic.meta.categories.mm}/><label htmlFor="mm">M/M</label>
+                            <input id="multi" type="checkbox" onChange={action((_e)=>fic.meta.categories.multi = !fic.meta.categories.multi)} defaultChecked={fic.meta.categories.multi}/><label htmlFor="multi">Multi</label>
+                            <input id="gen" type="checkbox" onChange={action((_e)=>fic.meta.categories.gen = !fic.meta.categories.gen)} defaultChecked={fic.meta.categories.gen}/><label htmlFor="gen">Gen</label>
+                            <input id="other" type="checkbox" onChange={action((_e)=>fic.meta.categories.other = !fic.meta.categories.other)} defaultChecked={fic.meta.categories.other}/><label htmlFor="other">Other</label>
                         </td>
                     </tr>
                     <tr>
@@ -82,7 +84,7 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td>
-                            <textarea className="metadata-edit__tag-textarea metadata-edit__ships-textarea" onChange={action((e)=>{props.fic.fic.meta.ships = this.parseTags(shipsField.current!.value);})} ref={shipsField}></textarea>
+                            <textarea className="metadata-edit__tag-textarea metadata-edit__ships-textarea" onChange={action((e)=>{fic.meta.ships = this.parseTags(shipsField.current!.value);})} ref={shipsField}></textarea>
                         </td>
                     </tr>
                     <tr>
@@ -92,7 +94,7 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td>
-                            <textarea className="metadata-edit__tag-textarea metadata-edit__characters-textarea" onChange={action((e)=>{props.fic.fic.meta.characters = this.parseTags(characterField.current!.value);})} ref={characterField}></textarea>
+                            <textarea className="metadata-edit__tag-textarea metadata-edit__characters-textarea" onChange={action((e)=>{fic.meta.characters = this.parseTags(characterField.current!.value);})} ref={characterField}></textarea>
                         </td>
                     </tr>
                     <tr>
@@ -102,7 +104,7 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td>
-                            <textarea className="metadata-edit__tag-textarea metadata-edit__tags-textarea" onChange={action((e)=>{props.fic.fic.meta.tags = this.parseTags(tagsField.current!.value);})} ref={tagsField}></textarea>
+                            <textarea className="metadata-edit__tag-textarea metadata-edit__tags-textarea" onChange={action((e)=>{fic.meta.tags = this.parseTags(tagsField.current!.value);})} ref={tagsField}></textarea>
                         </td>
                     </tr>
                     <tr>
@@ -112,7 +114,7 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td>
-                            <input type="text" className="metadata-edit__title-input" onChange={action((e)=>{props.fic.fic.meta.title = titleField.current!.value})}ref={titleField}></input>
+                            <input type="text" className="metadata-edit__title-input" onChange={action((e)=>{fic.meta.title = titleField.current!.value})}ref={titleField}></input>
                         </td>
                     </tr>
                     <tr>
@@ -122,7 +124,7 @@ export class MetadataTab implements Tab<EditorProps> {
                             </p>
                         </td>
                         <td>
-                            <textarea className="metadata-edit__summary-textarea" onChange={action((e)=>{props.fic.fic.meta.summary = summaryField.current!.value})} ref={summaryField}></textarea>
+                            <textarea className="metadata-edit__summary-textarea" onChange={action((e)=>{fic.meta.summary = summaryField.current!.value})} ref={summaryField}></textarea>
                         </td>
                     </tr>
                 </table>

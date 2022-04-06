@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { CompilerResult, compileTarget, FicCompilerError } from "../compiler/compiler";
 import { EditorTarget } from "../fanfic/editortarget";
 import { useEffect } from "react";
+import type { Fanfic } from "../fanfic/fanfiction";
 
 enum PreviewTab {
     PREVIEW = "Preview",
@@ -43,7 +44,7 @@ export interface PreviewTabProps extends PreviewProps {
 }
 
 export const Preview = observer(function(props: PreviewProps) {
-    let ret: CompilerResult|FicCompilerError = compileTarget(props.fic.fic, props.targ);
+    let ret: CompilerResult|FicCompilerError = compileTarget(props.fic.fic as Fanfic, props.targ);
     useEffect(()=>{
         hotUpdate(props.ctx.tabCtx);
     });
