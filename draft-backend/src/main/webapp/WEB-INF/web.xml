@@ -28,6 +28,14 @@
         <servlet-name>WriteFicServlet</servlet-name>
         <url-pattern>/write</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>ListFicsServlet</servlet-name>
+        <servlet-class>host.claire.ao3fanficdrafter.backend.servlet.ListFicsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ListFicsServlet</servlet-name>
+        <url-pattern>/listfics</url-pattern>
+    </servlet-mapping>
     
    
 </web-app>
