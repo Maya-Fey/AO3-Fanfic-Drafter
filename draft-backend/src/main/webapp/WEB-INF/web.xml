@@ -20,6 +20,14 @@
         <servlet-name>ReadFicServlet</servlet-name>
         <url-pattern>/read</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>WriteFicServlet</servlet-name>
+        <servlet-class>host.claire.ao3fanficdrafter.backend.servlet.WriteFicServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WriteFicServlet</servlet-name>
+        <url-pattern>/write</url-pattern>
+    </servlet-mapping>
     
    
 </web-app>
