@@ -7,6 +7,7 @@ import { Editor, EditorContext } from './editor/editor';
 import { EditorTarget } from './fanfic/editortarget';
 import { Fanfic } from './fanfic/fanfiction';
 import { Preview, PreviewContext } from './preview/preview';
+import { ServerContext } from './topmenu/serverconnect';
 import { TopMenu } from './topmenu/topmenu';
 
 export enum WindowFocus {
@@ -15,11 +16,19 @@ export enum WindowFocus {
   PREVIEW_ONLY
 }
 
+export interface ModalDialogInnerProps extends React.HTMLProps<HTMLDivElement> {
+  ctx: AppContext;
+}
+
 export interface RetargetCapability {
   retarget(target: EditorTarget): void;
 }
 
-export class AppContext implements RetargetCapability {
+export interface ModalCapability {
+  setModal(dialog: ((props: ModalDialogInnerProps)=>JSX.Element)|undefined): void;
+}
+
+export class AppContext implements RetargetCapability, ModalCapability {
   private focus: WindowFocus = WindowFocus.BOTH;
 
   target: EditorTarget = EditorTarget.targetFic();
@@ -27,9 +36,16 @@ export class AppContext implements RetargetCapability {
   editor: EditorContext = new EditorContext();
   preview: PreviewContext = new PreviewContext();
   fic: FanficContext = new FanficContext();
+  server: ServerContext = new ServerContext(this);
+
+  dialog: ((props: ModalDialogInnerProps)=>JSX.Element)|undefined = undefined;
 
   constructor () {
     makeAutoObservable(this);
+  }
+  
+  setModal(dialog: ((props: ModalDialogInnerProps) => JSX.Element) | undefined): void {
+    this.dialog = dialog;
   }
 
   setFocus(focus: WindowFocus): void {
@@ -57,19 +73,33 @@ export class FanficContext {
 let ctx: AppContext = new AppContext();
 
 export const App = observer(()=>{
-  return (
-    <div className="app">
-      <TopMenu ctx={ctx}/>
-      <AppInner/>
-    </div>
-  );
+  if(ctx.dialog === undefined) {
+    return (
+      <div className="app">
+        <TopMenu ctx={ctx}/>
+        <AppInner/>
+      </div>
+    );
+  } else {
+    return (
+    <React.Fragment>
+      <div className="app--hidden">
+          <TopMenu ctx={ctx}/>
+          <AppInner/>
+          <div className="app__modal-dialog">
+              <ctx.dialog ctx={ctx}/>
+          </div>
+      </div>
+    </React.Fragment>
+    )
+  }
 });
 
 export const AppInner = observer(()=>{
   if(ctx.fic.fic === undefined) {
     return (<div className="app__nofic">
       <span className="app__nofic__anchor"></span>
-      <span className="app__nofic__showtext">No fanfiction to display. Please log in to a server</span>    
+      <span className="app__nofic__showtext">No fanfiction to display. Please log in to a server and select a story to edit</span>    
     </div>);
   } else {
     return (
