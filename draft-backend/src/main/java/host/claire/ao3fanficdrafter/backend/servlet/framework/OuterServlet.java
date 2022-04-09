@@ -30,13 +30,12 @@ public abstract class OuterServlet extends HttpServlet {
     {
 		if(req == null || resp == null) 
 			return;
-		
 		resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 	
 	@Override
 	protected final void doPost(@Nullable HttpServletRequest req, @Nullable HttpServletResponse resp) throws ServletException, IOException
-    {
+    {		
 		if(req == null || resp == null) 
 			return;
 		
@@ -51,6 +50,21 @@ public abstract class OuterServlet extends HttpServlet {
 		
 		OutgoingPacket out = this.getInner().processRequest(gson.fromJson(json.toString(), this.getInner().typeOfIncoming()));
 		out.populate(resp);
+		
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+		resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+		resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+		resp.addHeader("Access-Control-Max-Age", "1728000");
     }
+	
+	@Override
+	protected final void doOptions(@Nullable HttpServletRequest req, @Nullable HttpServletResponse resp) throws ServletException, IOException
+	{
+		resp.addHeader("Access-Control-Allow-Origin", "*");
+		resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
+		resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
+		resp.addHeader("Access-Control-Max-Age", "1728000");
+		resp.setStatus(HttpServletResponse.SC_OK);
+	}
 
 }
