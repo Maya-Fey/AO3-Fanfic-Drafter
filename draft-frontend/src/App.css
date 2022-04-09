@@ -13,6 +13,23 @@ html, body, #root {
   height: 100%;
 }
 
+.app--hidden {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.app--hidden>:not(.top-menu):not(.app__modal-dialog) {
+  filter: blur(2px);
+}
+
+.app__modal-dialog {
+  position: absolute;
+  top: 2.5rem;
+  width: 100%;
+  height: calc(100% - 2.5rem);
+}
+
 .app__main {
   height: calc(100% - 2.5em);
 }
@@ -65,8 +82,25 @@ html, body, #root {
 }
 
 .top-menu {
-  height: 2.5em;
-  padding: 1em 1em 0em 1em;
+  height: 2.5rem;
+  padding: 1rem 1rem 0rem 1rem;
+  font-size: 0.9em;
+}
+
+.top-menu div, button {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -3px;
+}
+
+.top-menu hr {
+  height: 100%;
+  background-color: black;
+  border: none;
+  width: 0.0625em;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0.5em;
 }
 
 .editor {
@@ -548,4 +582,30 @@ span.tabbed-window__tab-selector-button {
   clear: both;
   color: transparent;
   opacity: 0;
+}
+
+.server-connect-form__anchor {
+  vertical-align: middle;
+  height: 100%;
+  display: inline-block;
+}
+
+.server-connect-form {
+  width: 100%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.server-connect-form table {
+  margin: 0 auto;
+  padding: 3em;
+  background-color: white;
+}
+
+.server-connect-form__buttons {
+  text-align: right;
+}
+
+.server-connect-form__buttons button {
+  margin: 0 0.25em;
 }
