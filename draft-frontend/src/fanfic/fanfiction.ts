@@ -127,4 +127,34 @@ export class Fanfic {
             return template;
         }
     }
+
+    fromSerialized(templates: any, meta: any) {
+        this.templates = objectToMap(templates);
+        this.meta = meta;
+        let warn = new ArchiveWarnings();
+        warn.choseNotToUse = meta.warnings.choseNotToUse;
+        warn.graphicViolence = meta.warnings.graphicViolence;
+        warn.majorDeath = meta.warnings.majorDeath;
+        warn.rape = meta.warnings.rape;
+        warn.underage = meta.warnings.underage;
+        this.meta.warnings = warn;
+        let cats: Categories = new Categories();
+        cats.ff = meta.categories.ff;
+        cats.fm = meta.categories.fm;
+        cats.mm = meta.categories.mm;
+        cats.multi = meta.categories.multi;
+        cats.gen = meta.categories.gen;
+        cats.other = meta.categories.other;
+        this.meta.categories = cats;
+    }
 }
+
+function objectToMap(obj: any): Map<any, any>  {
+    const keys = Object.keys(obj);
+    const map = new Map();
+    for(let i = 0; i < keys.length; i++){
+       //inserting new key value pair inside map
+       map.set(keys[i], obj[keys[i]]);
+    };
+    return map;
+ };

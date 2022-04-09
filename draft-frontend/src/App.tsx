@@ -68,6 +68,19 @@ export class FanficContext {
   constructor() {
     makeAutoObservable(this);
   }
+
+  switchStory(name: string, serverCtx: ServerContext): void {
+    if(name == "") {
+      //save current
+      this.fic = undefined;
+    }
+    serverCtx.readFic(name, "latest").then(val=>{
+      if(val instanceof Fanfic) {
+        //TODO: Save current
+        this.fic = val;
+      }
+    });
+  }
 }
 
 let ctx: AppContext = new AppContext();

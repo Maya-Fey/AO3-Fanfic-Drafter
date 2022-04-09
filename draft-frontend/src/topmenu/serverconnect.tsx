@@ -1,9 +1,11 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { makeAutoObservable } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { AppContext, ModalCapability, ModalDialogInnerProps } from "../App";
+import { Fanfic } from "../fanfic/fanfiction";
+import { FicTemplate } from "../fanfic/template";
 
 interface ConnectParams {
     url: string;
@@ -11,7 +13,25 @@ interface ConnectParams {
     password: string;
 }
 
-enum ConnectionStatus {
+interface ContentlessOutgoingPacket {
+    username: string;
+    authenticationCode: string;
+}
+
+interface ReadOutgoingPacket extends ContentlessOutgoingPacket{
+    ficName: string;
+    revision: string;
+}
+
+class ReqError {
+    error: any;
+
+    constructor(error: any) {
+        this.error = error;
+    }
+}
+
+export enum ConnectionStatus {
     CONNECTED_TO_SERVER,
     LOST_CONNECTION,
     NO_SERVER
@@ -40,10 +60,7 @@ export class ServerContext {
         //TODO: SHA it up
         this.password = params.password; 
 
-        axios.post("http://" + params.url + "/listfics", {
-            username: this.username,
-            authenticationCode: this.newMAC()
-        }).then(resp=>{
+        axios.post("http://" + params.url + "/listfics", this.newMAC()).then(resp=>{
             this.status = ConnectionStatus.CONNECTED_TO_SERVER;
             this.fics = resp.data as string[];
             this.url = params.url;
@@ -55,9 +72,65 @@ export class ServerContext {
         })
     }
 
-    newMAC(): string {
+    async readFic(name: string, revision: string = "latest"): Promise<Fanfic | undefined> {
+        let mac: ContentlessOutgoingPacket = this.newMAC();
+        let resp = await this.tryReq("read", {
+            username: mac.username,
+            authenticationCode: mac.authenticationCode,
+            ficName: name,
+            revision: revision
+        });
+        if(resp instanceof ReqError) {
+            this.onNotConnected();
+            return undefined;
+        } else {
+            let data: any = resp.data;
+            let ret: Fanfic = new Fanfic(data.title);
+            ret.fromSerialized(data.templates, data.meta);
+            return ret;
+        } 
+    }
+
+    async updateFicList(alerts: boolean = true): Promise<boolean> {
+        let resp = await this.tryReq("listfics", this.newMAC());
+        if(resp instanceof ReqError) {
+            this.onNotConnected();
+            return false;
+        } else {
+            this.fics = resp.data as string[];
+            return true;
+        }
+    }
+
+    async reconnect(): Promise<boolean> {
+        let resp: boolean = await this.updateFicList(false);
+        if(resp) this.status = ConnectionStatus.CONNECTED_TO_SERVER;
+        return resp;
+    }
+
+    async tryReq(page: string, args: any, options?: AxiosRequestConfig<any>): Promise<AxiosResponse<any, any>|ReqError> {
+        let retries: number = 5;
+        let error: any|undefined = undefined;
+        while(retries-->0) {
+            try {
+                return await axios.post("http://" + this.url + "/" + page, args, options);
+            } catch(e) {
+                error = e;
+            }
+        }
+        return new ReqError(error!);
+    }
+
+    onNotConnected() {
+        this.status = ConnectionStatus.LOST_CONNECTION;
+    }
+
+    newMAC(): ContentlessOutgoingPacket {
         //TODO: SHA it up
-        return this.password; 
+        return {
+            username: this.username,
+            authenticationCode: "girls"
+        };
     }
 
 }
