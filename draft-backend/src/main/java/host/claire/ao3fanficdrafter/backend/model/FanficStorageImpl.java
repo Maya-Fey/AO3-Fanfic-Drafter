@@ -24,7 +24,7 @@ public class FanficStorageImpl implements FanficStorage {
 	public FanficStorageImpl(File rootDir) {
 		super();
 		this.rootDir = rootDir;
-		
+		rootDir.mkdir();
 		List.of(rootDir.listFiles()).forEach(file->{
 			if(file.isDirectory()) {
 				try {
