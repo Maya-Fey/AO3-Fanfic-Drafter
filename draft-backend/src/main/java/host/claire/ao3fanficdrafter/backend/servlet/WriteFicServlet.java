@@ -8,7 +8,7 @@ import host.claire.ao3fanficdrafter.backend.servlet.framework.ServletGlobalState
 import host.claire.ao3fanficdrafter.backend.servlet.framework.virtual.IncomingPacket;
 import host.claire.ao3fanficdrafter.backend.servlet.framework.virtual.InnerServlet;
 
-public class WriteServlet extends OuterServlet {
+public class WriteFicServlet extends OuterServlet {
 
 	private static final long serialVersionUID = 5928551237085149299L;
 
