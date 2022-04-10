@@ -28,6 +28,10 @@ export interface ModalCapability {
   setModal(dialog: ((props: ModalDialogInnerProps)=>JSX.Element)|undefined): void;
 }
 
+export interface SetDirtyCapability {
+  setDirty(): void;
+}
+
 export class AppContext implements RetargetCapability, ModalCapability {
   private focus: WindowFocus = WindowFocus.BOTH;
 
@@ -36,7 +40,7 @@ export class AppContext implements RetargetCapability, ModalCapability {
   editor: EditorContext = new EditorContext();
   preview: PreviewContext = new PreviewContext();
   fic: FanficContext = new FanficContext();
-  server: ServerContext = new ServerContext(this);
+  server: ServerContext = new ServerContext(this, this.fic);
 
   dialog: ((props: ModalDialogInnerProps)=>JSX.Element)|undefined = undefined;
 
@@ -62,11 +66,16 @@ export class AppContext implements RetargetCapability, ModalCapability {
   }
 }
 
-export class FanficContext {
+export class FanficContext implements SetDirtyCapability {
   fic: Fanfic|undefined = undefined;
+  dirty: boolean = false;
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  setDirty(): void {
+    this.dirty = true;
   }
 
   switchStory(name: string, serverCtx: ServerContext): void {

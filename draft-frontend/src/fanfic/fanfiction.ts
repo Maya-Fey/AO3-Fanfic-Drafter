@@ -1,4 +1,5 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction, observe } from "mobx";
+import { allowStateReadsStart  } from "mobx/dist/internal";
 import { FicTemplate } from "./template";
 
 export enum Rating {
@@ -30,8 +31,10 @@ export class ArchiveWarnings {
     underage: boolean = false;
     rape: boolean = false;
 
-    constructor() {
+    constructor(onDirty: ()=>void) {
         makeAutoObservable(this);
+
+        observe(this, onDirty);
     }
 
     toTags(): string[] {
@@ -44,6 +47,14 @@ export class ArchiveWarnings {
         if(ret.length === 0) ret.push("No Archive Warnings Apply");
         return ret;
     }
+
+    fromSerialized(obj: any) {
+        this.choseNotToUse = obj.choseNotToUse;
+        this.majorDeath = obj.majorDeath
+        this.graphicViolence = obj.graphicViolence;
+        this.underage = obj.underage;
+        this.rape = obj.rape;
+    }
 }
 
 export class Categories {
@@ -54,8 +65,10 @@ export class Categories {
     gen: boolean = false;
     other: boolean = false;
 
-    constructor() {
+    constructor(onDirty: ()=>void) {
         makeAutoObservable(this);
+
+        observe(this, onDirty);
     }
 
     toTags(): string[] {
@@ -68,13 +81,22 @@ export class Categories {
         if(this.other) ret.push("Other");
         return ret;
     }
+
+    fromSerialized(obj: any) {
+        this.ff = obj.ff;
+        this.fm = obj.fm;
+        this.mm = obj.mm;
+        this.multi = obj.multi;
+        this.gen = obj.gen;
+        this.other = obj.other;
+    }
 }
 
 export class FanficMetadata implements HasValidator {
     title: string;
     rating: Rating = Rating.NOT_RATED;
-    categories: Categories = new Categories();
-    warnings: ArchiveWarnings = new ArchiveWarnings();
+    categories: Categories;
+    warnings: ArchiveWarnings;
 
     summary: string = "";
 
@@ -83,9 +105,14 @@ export class FanficMetadata implements HasValidator {
     characters: string[] = [];
     tags: string[] = [];
 
-    constructor(title: string) {
+    constructor(title: string, onDirty: ()=>void) {
         this.title = title;
         makeAutoObservable(this);
+
+        this.warnings = new ArchiveWarnings(onDirty);
+        this.categories = new Categories(onDirty)
+
+        observe(this, onDirty);
     }
 
     validate(): ValidationResult {
@@ -99,6 +126,19 @@ export class FanficMetadata implements HasValidator {
 
         return { valid: true, validationReason: ""};
     }
+
+    fromSerialized(obj: any) {
+        this.title = obj.title;
+        this.rating = obj.rating;
+        this.summary = obj.summary;
+        this.fandoms = obj.fandoms;
+        this.ships = obj.ships;
+        this.characters = obj.characters;
+        this.tags = obj.tags;
+
+        this.warnings.fromSerialized(obj.warnings);
+        this.categories.fromSerialized(obj.categories);
+    }
 }
 
 export class Fanfic {
@@ -109,10 +149,20 @@ export class Fanfic {
 
     meta: FanficMetadata;
 
-    constructor(title: string) {
-        this.meta = new FanficMetadata(title);
+    constructor(title: string, onDirty: ()=>void) {
+        this.meta = new FanficMetadata(title, onDirty);
+
         makeAutoObservable(this);
+
+        reaction(()=>this.templates.size,_size=>onDirty());
+
+        observe(this.templates, onDirty);
+        observe(this, onDirty);
+
+        this.onDirty = onDirty;
     }
+
+    onDirty: ()=>void = ()=>{};
 
     updateText(newText: string): void {
         this.text = newText;
@@ -128,33 +178,19 @@ export class Fanfic {
         }
     }
 
-    fromSerialized(templates: any, meta: any) {
-        this.templates = objectToMap(templates);
-        this.meta = meta;
-        let warn = new ArchiveWarnings();
-        warn.choseNotToUse = meta.warnings.choseNotToUse;
-        warn.graphicViolence = meta.warnings.graphicViolence;
-        warn.majorDeath = meta.warnings.majorDeath;
-        warn.rape = meta.warnings.rape;
-        warn.underage = meta.warnings.underage;
-        this.meta.warnings = warn;
-        let cats: Categories = new Categories();
-        cats.ff = meta.categories.ff;
-        cats.fm = meta.categories.fm;
-        cats.mm = meta.categories.mm;
-        cats.multi = meta.categories.multi;
-        cats.gen = meta.categories.gen;
-        cats.other = meta.categories.other;
-        this.meta.categories = cats;
+    newTemplate(name: string): FicTemplate {
+        let temp: FicTemplate = new FicTemplate(name);
+        observe(temp, this.onDirty);
+        this.templates.set(name, temp);
+        return temp;
+    }
+
+    fromSerialized(obj: any) {
+        this.text = obj.text;
+        Object.keys(obj.templates).forEach(key=>{
+            makeAutoObservable(obj[key]);
+            this.templates.set(key, obj[key]);
+        })
+        this.meta.fromSerialized(obj.meta);
     }
 }
-
-function objectToMap(obj: any): Map<any, any>  {
-    const keys = Object.keys(obj);
-    const map = new Map();
-    for(let i = 0; i < keys.length; i++){
-       //inserting new key value pair inside map
-       map.set(keys[i], obj[keys[i]]);
-    };
-    return map;
- };

@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { AppContext, ModalCapability, ModalDialogInnerProps } from "../App";
+import { AppContext, ModalCapability, ModalDialogInnerProps, SetDirtyCapability } from "../App";
 import { Fanfic } from "../fanfic/fanfiction";
 import { FicTemplate } from "../fanfic/template";
 
@@ -48,14 +48,15 @@ export class ServerContext {
     fics: string[] = [];
 
     setModal: ModalCapability;
+    setDirty: SetDirtyCapability;
 
-    constructor(setModal: ModalCapability) {
+    constructor(setModal: ModalCapability, setDirty: SetDirtyCapability) {
         makeAutoObservable(this);
         this.setModal = setModal;
+        this.setDirty = setDirty;
     }
 
     connect(params: ConnectParams): void {
-        console.log(params);
         this.username = params.username;
         //TODO: SHA it up
         this.password = params.password; 
@@ -85,8 +86,11 @@ export class ServerContext {
             return undefined;
         } else {
             let data: any = resp.data;
-            let ret: Fanfic = new Fanfic(data.title);
-            ret.fromSerialized(data.templates, data.meta);
+            let ret: Fanfic = new Fanfic(data.title, ()=>{
+                this.setDirty.setDirty();
+            });
+            ret.fromSerialized(data);
+            console.log(JSON.stringify(ret));
             return ret;
         } 
     }
