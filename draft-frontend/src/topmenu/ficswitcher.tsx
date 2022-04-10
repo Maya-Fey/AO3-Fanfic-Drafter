@@ -23,7 +23,7 @@ export const FicSwitcher = observer((props: FicSwitcherProps)=>{
 });
 
 const FicSwitcherDropdown = observer((props: FicSwitcherProps)=>{
-    let options: JSX.Element[] = props.ctx.server.fics.map(title=><FicSwitcherOption title={title} />)
+    let options: JSX.Element[] = props.ctx.server.fics.map(title=><FicSwitcherOption key={title} title={title} />)
     return (
         <select onChange={(e)=>{ props.ctx.fic.switchStory(e.target.value, props.ctx.server); }}>
             <option value="">Select a fic to edit</option>
@@ -37,5 +37,5 @@ export interface FicSwitcherOptionProps extends React.HTMLProps<HTMLOptionElemen
 }
 
 function FicSwitcherOption(props: FicSwitcherOptionProps) {
-    return <option key={props.title} value={props.title}>{props.title}</option>
+    return <option value={props.title}>{props.title}</option>
 }
