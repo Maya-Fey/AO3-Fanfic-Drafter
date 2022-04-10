@@ -135,6 +135,9 @@ export class PreviewDisplayTab implements Tab<PreviewTabProps> {
                         </div>
                         <div id="chapters" role="article">
                             <h3 className="landmark heading" id="work">Work Text:</h3>
+                            <style>
+                                { (props.compiled instanceof FicCompilerError) ? "" : props.compiled.files.get(props.compiled.keyStylesheet) }
+                            </style>
                             <div className="userstuff" ref={this.textRef}></div>
                         </div>
                     </div>
