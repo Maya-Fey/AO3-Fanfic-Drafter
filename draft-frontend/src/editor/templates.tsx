@@ -57,10 +57,6 @@ export class TemplatesTab implements Tab<EditorProps> {
         }
         this.templateCtx!.setSelection(selection);
     }
-    
-    getTemplate(fic: Fanfic): FicTemplate {
-        return fic.getTemplateIfPresent("test", ()=>{return new FicTemplate("test")});
-    }
 
     render: (props: EditorProps)=>JSX.Element = (props: EditorProps)=>{
         let fic: Fanfic = props.fic.fic as Fanfic;
@@ -151,7 +147,7 @@ export class TemplatesTab implements Tab<EditorProps> {
                 return;
             }
 
-            fic.templates.set(name, new FicTemplate(name));
+            fic.newTemplate(name);
             this.setSelection(name);
         }
     }
