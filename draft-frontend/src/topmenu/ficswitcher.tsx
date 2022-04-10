@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { AppContext } from "../App";
+import { FicFlush } from "./ficflush";
 import { ConnectionStatus } from "./serverconnect";
 
 export interface FicSwitcherProps extends React.HTMLProps<HTMLDivElement> {
@@ -12,7 +13,8 @@ export const FicSwitcher = observer((props: FicSwitcherProps)=>{
        return (
            <React.Fragment>
                <hr/>
-               <FicSwitcherDropdown ctx={props.ctx}/>
+               <FicSwitcherDropdown ctx={props.ctx}/>&nbsp;
+               <FicFlush ficCtx={props.ctx.fic} serverCtx={props.ctx.server}/>
            </React.Fragment>
         );
     } else {
