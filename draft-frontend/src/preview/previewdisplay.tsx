@@ -211,7 +211,7 @@ interface TagProps extends React.HTMLProps<HTMLAnchorElement> {
 function Tag(props: TagProps) {
     return (
         <li className={props.last ? "last" : ""}>
-            <a {...props} href={encodeURI("https://archiveofourown.org/tags/" + props.tagName + "/works")} className="tag">{props.tagName}</a>
+            <a href={encodeURI("https://archiveofourown.org/tags/" + props.tagName + "/works")} className="tag">{props.tagName}</a>
         </li>
     );
 }
