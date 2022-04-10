@@ -188,8 +188,12 @@ export class Fanfic {
     fromSerialized(obj: any) {
         this.text = obj.text;
         Object.keys(obj.templates).forEach(key=>{
-            makeAutoObservable(obj[key]);
-            this.templates.set(key, obj[key]);
+            let raw = obj.templates[key];
+            let template: FicTemplate = new FicTemplate(raw.key);
+            template.example = raw.example; 
+            template.source = raw.source;
+            template.style = raw.style;
+            this.templates.set(key, template);
         })
         this.meta.fromSerialized(obj.meta);
     }
