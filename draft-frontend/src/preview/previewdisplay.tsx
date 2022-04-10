@@ -198,7 +198,7 @@ interface TagsProps extends React.HTMLProps<HTMLAnchorElement> {
 function Tags(props: TagsProps) {
     let tags: JSX.Element[]  = [];
     props.tagNames.forEach((tn, i)=>{
-        tags.push(<Tag tagName={tn} last={i == props.tagNames.length - 1}/>);
+        tags.push(<Tag key={tn} tagName={tn} last={i == props.tagNames.length - 1}/>);
     })
     return <React.Fragment>{tags}</React.Fragment>;
 }
