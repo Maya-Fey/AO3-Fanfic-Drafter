@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { makeAutoObservable, reaction } from "mobx";
+import { action, makeAutoObservable, reaction } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -66,12 +66,12 @@ export class ServerContext {
         //TODO: SHA it up
         this.password = params.password; 
 
-        axios.post("http://" + params.url + "/listfics", this.newMAC()).then(resp=>{
+        axios.post("http://" + params.url + "/listfics", this.newMAC()).then(action(resp=>{
             this.status = ConnectionStatus.CONNECTED_TO_SERVER;
             this.fics = resp.data as string[];
             this.url = params.url;
             this.setModal.setModal(undefined);
-        }).catch(e=>{
+        })).catch(e=>{
             this.username = "";
             this.password = "";
             alert("Error connecting to server");
@@ -168,7 +168,7 @@ export const ServerConnect = observer((props: ServerConnectProps)=>{
         return (
             <React.Fragment>
                 Not Connected&nbsp;
-                <button onClick={()=>{props.ctx.dialog = ServerConnectDialog}}>
+                <button onClick={()=>{props.ctx.setModal(ServerConnectDialog)}}>
                     Connect
                 </button>
             </React.Fragment>

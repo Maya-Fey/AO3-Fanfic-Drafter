@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { action, makeAutoObservable } from 'mobx';
 import { observer } from 'mobx-react';
 import React from 'react';
 import { Context } from 'vm';
@@ -80,12 +80,12 @@ export class FanficContext implements SetDirtyCapability {
   }
 
   save(serverCtx: ServerContext): void {
-    serverCtx.writeFic(this.prevName!, this.fic!).then(success=>{
+    serverCtx.writeFic(this.prevName!, this.fic!).then(action(success=>{
       if(success) {
         this.dirty = false;
         this.prevName = this.fic!.meta.title;
       }
-    });
+    }));
   }
 
   switchStory(name: string, serverCtx: ServerContext): void {
@@ -93,14 +93,14 @@ export class FanficContext implements SetDirtyCapability {
       //save current
       this.fic = undefined;
     }
-    serverCtx.readFic(name, "latest").then(val=>{
+    serverCtx.readFic(name, "latest").then(action(val=>{
       if(val instanceof Fanfic) {
         //TODO: Save current
         this.fic = val;
         this.prevName = this.fic?.meta.title;
         this.dirty = false;
       }
-    });
+    }));
   }
 }
 
