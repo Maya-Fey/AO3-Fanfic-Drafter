@@ -21,6 +21,7 @@ public class ContentOutgoingPacket implements OutgoingPacket {
 
 	@Override
 	public void populate(HttpServletResponse resp) {
+		resp.setContentType("application/json");
 		try {
 			resp.getWriter().write(gson.toJson(this.o));
 		} catch (IOException e) {
@@ -28,7 +29,6 @@ public class ContentOutgoingPacket implements OutgoingPacket {
 			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		}
-		resp.setContentType("application/json");
 		resp.setStatus(HttpServletResponse.SC_OK);
 	}
 

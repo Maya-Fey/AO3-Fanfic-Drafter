@@ -48,13 +48,15 @@ public abstract class OuterServlet extends HttpServlet {
 			}
 		}
 		
-		OutgoingPacket out = this.getInner().processRequest(gson.fromJson(json.toString(), this.getInner().typeOfIncoming()));
-		out.populate(resp);
-		
 		resp.addHeader("Access-Control-Allow-Origin", "*");
 		resp.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD");
 		resp.addHeader("Access-Control-Allow-Headers", "X-PINGOTHER, Origin, X-Requested-With, Content-Type, Accept");
 		resp.addHeader("Access-Control-Max-Age", "1728000");
+		
+		OutgoingPacket out = this.getInner().processRequest(gson.fromJson(json.toString(), this.getInner().typeOfIncoming()));
+		out.populate(resp);
+		
+		
     }
 	
 	@Override
