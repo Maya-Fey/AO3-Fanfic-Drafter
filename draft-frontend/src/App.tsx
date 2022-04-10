@@ -68,6 +68,7 @@ export class AppContext implements RetargetCapability, ModalCapability {
 
 export class FanficContext implements SetDirtyCapability {
   fic: Fanfic|undefined = undefined;
+  prevName: string|undefined = undefined;
   dirty: boolean = false;
 
   constructor() {
@@ -76,6 +77,15 @@ export class FanficContext implements SetDirtyCapability {
 
   setDirty(): void {
     this.dirty = true;
+  }
+
+  save(serverCtx: ServerContext): void {
+    serverCtx.writeFic(this.prevName!, this.fic!).then(success=>{
+      if(success) {
+        this.dirty = false;
+        this.prevName = this.fic!.meta.title;
+      }
+    });
   }
 
   switchStory(name: string, serverCtx: ServerContext): void {
@@ -87,6 +97,8 @@ export class FanficContext implements SetDirtyCapability {
       if(val instanceof Fanfic) {
         //TODO: Save current
         this.fic = val;
+        this.prevName = this.fic?.meta.title;
+        this.dirty = false;
       }
     });
   }

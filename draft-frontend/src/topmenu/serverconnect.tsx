@@ -23,6 +23,11 @@ interface ReadOutgoingPacket extends ContentlessOutgoingPacket{
     revision: string;
 }
 
+interface WriteOutgoingPacket extends ContentlessOutgoingPacket{
+    prevName: string;
+    fanfic: Fanfic;
+}
+
 class ReqError {
     error: any;
 
@@ -90,9 +95,24 @@ export class ServerContext {
                 this.setDirty.setDirty();
             });
             ret.fromSerialized(data);
-            console.log(JSON.stringify(ret));
             return ret;
         } 
+    }
+
+    async writeFic(prevName: string, fic: Fanfic): Promise<boolean> {
+        let mac: ContentlessOutgoingPacket = this.newMAC();
+        let resp = await this.tryReq("write", {
+            username: mac.username,
+            authenticationCode: mac.authenticationCode,
+            prevName: prevName,
+            fanfic: fic
+        });
+        if(resp instanceof ReqError) {
+            this.onNotConnected();
+            return false;
+        } else {
+            return true;
+        }
     }
 
     async updateFicList(alerts: boolean = true): Promise<boolean> {
