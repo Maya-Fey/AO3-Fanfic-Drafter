@@ -196,36 +196,38 @@ function ServerConnectDialog(props: ModalDialogInnerProps): JSX.Element {
             <span className="server-connect-form__anchor"></span>
             <form className="server-connect-form" onSubmit={handleSubmit(props.ctx.server.connect.bind(props.ctx.server))}>
                 <table>
-                    <tr>
-                        <td>
-                            Server URL/IP
-                        </td>
-                        <td>
-                            <input type="text" {...register("url")}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Username
-                        </td>
-                        <td>
-                            <input type="text" {...register("username")} ></input>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Password
-                        </td>
-                        <td>
-                            <input type="password" {...register("password")} ></input>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="server-connect-form__buttons" colSpan={2}>
-                            <button type="button" onClick={()=>{props.ctx.dialog = undefined;}}>Cancel</button>
-                            <button type="submit">Connect</button>
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Server URL/IP
+                            </td>
+                            <td>
+                                <input type="text" {...register("url")}/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Username
+                            </td>
+                            <td>
+                                <input type="text" {...register("username")} ></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Password
+                            </td>
+                            <td>
+                                <input type="password" {...register("password")} ></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className="server-connect-form__buttons" colSpan={2}>
+                                <button type="button" onClick={()=>{props.ctx.dialog = undefined;}}>Cancel</button>
+                                <button type="submit">Connect</button>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </form>
         </React.Fragment>
