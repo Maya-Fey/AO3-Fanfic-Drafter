@@ -93,6 +93,7 @@ class CompiledTemplateImpl implements CompiledTemplate {
     }
 
     runWithTarg(target: Element[], item: string): Node[]|string {
+        if(target === undefined || target.length === 0) return "not found";
         //children --> element's children
         //bare words --> value of that attribute in the element
         //[number].stuff = the number'th element with the above operation applied
