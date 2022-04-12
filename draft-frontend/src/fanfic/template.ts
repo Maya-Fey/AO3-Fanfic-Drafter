@@ -65,7 +65,7 @@ class CompiledTemplateImpl implements CompiledTemplate {
             } else {
                 if(n.attribs.class) {
                     let classes: string[] = [...n.attribs.class.matchAll(new RegExp("([^$][^ ]*)( |$)|(\\${.*?})( |$)", "g"))].map(arr=>arr[1] !== undefined ? arr[1] : arr[3]);
-
+                    
                     n.attribs.class = classes
                         .map(c=>{
                             if(c.length === 0) return "";
@@ -134,19 +134,57 @@ export function compileTemplate(template: FicTemplate): CompiledTemplate|FicComp
         return new FicCompilerError("Error compiling template " + template.key + ": " + String(e));
     }
 
-    style.stylesheet!.rules.forEach(rule=>{
-        if((rule as Rule).selectors) {
-            let ruleR: Rule = rule;
-            ruleR.selectors![0] = "#workskin " + ruleR.selectors![0] + "." + template.key;
-        }
-    });
-
     let doc: Document = parseDocument(template.source);
     let ret: FicCompilerError|undefined = addInsertionGhosts(doc);
     if(ret instanceof FicCompilerError) return ret;
 
+    let classes: Set<string> = new Set<string>();
+    collectClasses(doc, template.key, classes);
+
+    style.stylesheet!.rules.forEach(rule=>{
+        if((rule as Rule).selectors) {
+            let ruleR: Rule = rule;
+            for(let i: number = 0; i < ruleR.selectors!.length; i++) {
+                let parts: string[] = [...ruleR.selectors![i].matchAll(new RegExp("(([^ [\\]~>+]|\\[.*?\\])+([~+> ]|$))", "g"))].map(match=>match[0]);
+                let nselector: string = "#workskin ";
+                parts.forEach(part=>{
+                    let subparts: string[] = [...part.matchAll(new RegExp("\\.[^ ~!@$%^&*()+=,.\\/';:\"?><[\\]\\\\{}|`#]+|([^.[]|\\[.*?\\])+", "g"))].map(match=>match[0]);
+                    subparts.forEach(subpart=>{
+                        if(subpart.startsWith(".") && classes.has(subpart.substring(1))) {
+                            nselector += ".template__" + template.key + "__" + subpart.substring(1);
+                        } else {
+                            nselector += subpart;
+                        }
+                    });
+                });
+                ruleR.selectors![i] = nselector;
+            }
+        }
+    });
+
     let compiler: CssCompiler = new CssCompiler();
     return new CompiledTemplateImpl(template.key, compiler.compile(style), doc.childNodes);
+}
+
+
+function collectClasses(node: NodeWithChildren, name: string, set: Set<string>): void {
+    if(node instanceof Element) {
+        if(node.attribs["class"] !== undefined) {
+            let classes: string = "";
+            [...node.attribs.class.matchAll(new RegExp("([^$][^ ]*)( |$)|(\\${.*?})( |$)", "g"))].map(arr=>arr[1] !== undefined ? arr[1] : arr[3]).forEach(class_=>{
+                if(class_.startsWith("$")) {
+                    classes += class_ + " ";
+                } else {
+                    set.add(class_);
+                    classes += "template__" + name + "__" + class_ + " ";
+                }
+            });
+            node.attribs["class"] = classes.substring(0, classes.length - 1);
+        }
+    }
+    node.childNodes.filter(node=>node instanceof NodeWithChildren).forEach(nwc=>{
+        collectClasses(nwc as NodeWithChildren, name, set);
+    });
 }
 
 function addInsertionGhosts(node: NodeWithChildren): undefined|FicCompilerError {
