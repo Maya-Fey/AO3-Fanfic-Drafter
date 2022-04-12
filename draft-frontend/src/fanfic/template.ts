@@ -6,6 +6,7 @@ import CssCompiler from "css/lib/stringify/identity"
 import parseCSS from "css/lib/parse"
 import { selectAll } from "css-select"
 import { parseDocument } from "htmlparser2";
+import { readdir } from "fs";
 
 const INSERTION_GHOST_NAME: string = "__insertionghost"
 
@@ -70,7 +71,7 @@ class CompiledTemplateImpl implements CompiledTemplate {
                         .map(c=>{
                             if(c.length === 0) return "";
                             if(c[0] == '$') {
-                                return this.run(parent, c.slice(2, -1));
+                                return this.toString(this.run(parent, c.slice(2, -1)));
                             } else {
                                 return c;
                             }
@@ -117,7 +118,17 @@ class CompiledTemplateImpl implements CompiledTemplate {
         }
     }
 
+    toString(input: Node[]|string): string {
+        if(input === undefined) input = "undefined";
+        if(typeof input === 'string') {
+            return input;
+        } else {
+            return "[expected string, got element]"
+        }
+    }
+
     toNode(input: Node[]|string): Node[] {
+        if(input === undefined) input = "undefined";
         if(typeof input === 'string') {
             return [ new Text(input) ];
         } else {
