@@ -28,7 +28,7 @@ export function compileTarget(fic: Fanfic, target: EditorTarget): CompilerResult
         let exRes: CompilerResult|FicCompilerError = rawCompileFanfic(template.example, fic.templates);
         if(exRes instanceof FicCompilerError) return new FicCompilerError("Error in example or other template: " + exRes.reason);
 
-        return { files: new Map<string, string>([["Example", exRes.files.get("Chapter 0")!], ["stylesheet", ret.style]]), keyStylesheet: "stylesheet"}
+        return { files: new Map<string, string>([["Example", exRes.files.get("Chapter 0")!], ["stylesheet", ret.style], ["full stylesheet", exRes.files.get(exRes.keyStylesheet)!]]), keyStylesheet: "full stylesheet"}
     } else {
         return compileFanfic(fic);
     }
