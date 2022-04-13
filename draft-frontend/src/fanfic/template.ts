@@ -166,7 +166,15 @@ class CompiledTemplateImpl implements CompiledTemplate {
                 (final as Array<Node>).push(new Text("\n"));
             })
             final = final.slice(0, -1);
-        }  else {
+        } else if(expr === "capitalize") {
+            let text: string|undefined = undefined;
+            if(typeof target === "string") text = target as string;
+            if(target instanceof Text) text = target.data;
+            if(text === undefined) {
+                return "[capitalize expects a string or a text node]"
+            }
+            final = text === "" ? "" : text.substring(0, 1).toUpperCase() + text.substring(1);
+        } else {
             let singularTarget: Element|undefined = undefined;
             if(target instanceof Array && target[0] instanceof Element) singularTarget = target[0];
             if(target instanceof Element) singularTarget = target;
