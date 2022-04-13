@@ -5,8 +5,9 @@ import { Rule, Stylesheet } from "css";
 import CssCompiler from "css/lib/stringify/identity"
 import parseCSS from "css/lib/parse"
 import { selectAll } from "css-select"
-import { parseDocument } from "htmlparser2";
+import { ElementType, parseDocument } from "htmlparser2";
 import { readdir } from "fs";
+import { formatDiagnostic } from "typescript";
 
 const INSERTION_GHOST_NAME: string = "__insertionghost"
 
@@ -90,32 +91,118 @@ class CompiledTemplateImpl implements CompiledTemplate {
         let selector: string = script.slice(0, itemPos);
         let item: string = script.slice(itemPos, script.length).trim();
 
-        return this.runWithTarg(selector === "" ? [parent] : selectAll(selector, [parent]), item);
+        return this.runWithTarg(parent, selector === "" ? [parent] : selectAll(selector, [parent]), item);
     }
 
-    runWithTarg(target: Element[], item: string): Node[]|string {
-        if(target === undefined || target.length === 0) return "not found";
+    runWithTarg(root: Element, target: Node[]|Element|string, item: string): Node[]|string {
+        if(target === undefined) return "[not found]";
+        if(target instanceof Array && target.length === 0) return "[not found]"; 
         //children --> element's children
         //bare words --> value of that attribute in the element
         //[number].stuff = the number'th element with the above operation applied
-        let exprPos: number = item.lastIndexOf(".");
-        let selector: string = item.slice(0, Math.max(exprPos, 0));
-        let expr: string = item.slice(exprPos + 1, item.length);
+        let exprPos: number = item.indexOf(".");
+        let expr: string = item.slice(0, Math.max(exprPos, 0));
+        let restOfExpr: string = item.slice(exprPos + 1, item.length);
+        if(expr === "") {
+            expr = restOfExpr;
+            restOfExpr = "";
+        } 
 
-        let pos: number = 0;
-        if(selector !== "") {
-            pos = parseInt(selector.slice(1, selector.length - 1));
-            if(isNaN(pos) || Math.abs(pos) >= target.length) return "undefined";
+        let final: Node[]|Element|string = target;
+
+        if(expr === "") {
+            ;
+        } else if(expr.startsWith("[") && expr.indexOf(":") !== -1) {
+            if(!(target instanceof Array)) return "[can't perform array operations on non-array]"
+            expr = expr.slice(1, expr.length - 1);
+            let sides: string[] = expr.split(":");
+            if(sides.length !== 2) return "[invalid array slice]";
+
+            if(sides[0] === "") sides[0] = "0";
+            if(sides[1] === "") sides[1] = "" + target.length;
+
+            let leftpos: number = parseInt(sides[0]);
+            let rightpos: number = parseInt(sides[1]);
+
+            if(isNaN(leftpos) || isNaN(rightpos)) return "[invalid array slice]";
+            if(Math.abs(leftpos) > target.length || Math.abs(rightpos) > target.length) return "[index out of bounds]";
+
+            final = target.slice(leftpos, rightpos);
+            if(final.length == 0) return "[array slice resulted in size of 0]"
+        } else if(expr.startsWith("[")) {
+            if(!(target instanceof Array)) return "[can't perform array operations on non-array]"
+            let pos: number = parseInt(expr.slice(1, expr.length - 1));
+            if(isNaN(pos)) return "[invalid array operation]";
+            if(Math.abs(pos) >= target.length) return "[index out of bounds]";
             if(pos < 0) pos = target.length + pos;
+
+            if(target[pos] instanceof Element) {
+                final = target[pos] as Element;
+            } else if(target[pos] instanceof Text) {
+                final = (target[pos] as Text).data;
+            } else {
+                return "[bug, please report to https://github.com/Maya-Fey/AO3-Fanfic-Drafter/issues/new]"
+            }
+        } else if(expr === "children") {
+            let singularTarget: Element|undefined = undefined;
+            if(target instanceof Array && target[0] instanceof Element) singularTarget = target[0];
+            if(target instanceof Element) singularTarget = target;
+            if(singularTarget === undefined) {
+                return "[children expects element or array of elements]"
+            }
+            final = singularTarget.childNodes.map(cn=>cn.cloneNode(true));
+        } else if(expr === "lines") {
+            let text: string|undefined = undefined;
+            if(typeof target === "string") text = target as string;
+            if(target instanceof Text) text = target.data;
+            if(text === undefined) {
+                return "[lines expects a string or a text node]"
+            }
+            let lines: string[] = text.split("\n").filter(line=>line.length > 0);
+            let pre: Element[] = lines.map(line=>new Text(line)).map(node=>new Element("span", {}, [node], ElementType.Tag));
+            final = [];
+            pre.forEach(node=>{
+                (final as Array<Node>).push(node);
+                (final as Array<Node>).push(new Text("\n"));
+            })
+            final = final.slice(0, -1);
+        }  else {
+            let singularTarget: Element|undefined = undefined;
+            if(target instanceof Array && target[0] instanceof Element) singularTarget = target[0];
+            if(target instanceof Element) singularTarget = target;
+            if(singularTarget === undefined) {
+                return "[can't get attrib of non-element]"
+            }
+            final = singularTarget.attribs[expr];
         }
 
-        let singularTarget: Element = target[pos];
-
-        if(expr === "children") {
-            return singularTarget.childNodes.map(cn=>cn.cloneNode(true));
+        if(restOfExpr !== undefined && restOfExpr.length > 0) {
+            return this.runWithTarg(root, final, restOfExpr);
         } else {
-            return singularTarget.attribs[expr];
+            if(final === root || (final instanceof Array && final[0] === root)) {
+                return "[infinite recursion detected: template expr returned root element]"
+            } else {
+                if(final instanceof Element)
+                    return [final]
+                else
+                    return final;
+            }
         }
+
+        // let pos: number = 0;
+        // if(selector !== "") {
+        //     pos = parseInt(selector.slice(1, selector.length - 1));
+        //     if(isNaN(pos) || Math.abs(pos) >= target.length) return "undefined";
+        //     if(pos < 0) pos = target.length + pos;
+        // }
+
+        // let singularTarget: Element = target[pos];
+
+        // if(expr === "children") {
+        //     return singularTarget.childNodes.map(cn=>cn.cloneNode(true));
+        // } else {
+        //     return singularTarget.attribs[expr];
+        // }
     }
 
     toString(input: Node[]|string): string {
@@ -157,7 +244,7 @@ export function compileTemplate(template: FicTemplate): CompiledTemplate|FicComp
         if((rule as Rule).selectors) {
             let ruleR: Rule = rule;
             for(let i: number = 0; i < ruleR.selectors!.length; i++) {
-                let parts: string[] = [...ruleR.selectors![i].matchAll(new RegExp("(([^ [\\]~>+]|\\[.*?\\])+([~+> ]|$))", "g"))].map(match=>match[0]);
+                let parts: string[] = [...ruleR.selectors![i].matchAll(new RegExp("(([^ [\\]~>+]|\\[.*?\\])+([~+> ]+|$))", "g"))].map(match=>match[0]);
                 let nselector: string = "#workskin ";
                 parts.forEach(part=>{
                     let subparts: string[] = [...part.matchAll(new RegExp("\\.[^ ~!@$%^&*()+=,.\\/';:\"?><[\\]\\\\{}|`#]+|([^.[]|\\[.*?\\])+", "g"))].map(match=>match[0]);
