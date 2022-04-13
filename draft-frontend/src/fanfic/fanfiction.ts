@@ -193,6 +193,7 @@ export class Fanfic {
             template.example = raw.example; 
             template.source = raw.source;
             template.style = raw.style;
+            observe(template, this.onDirty);
             this.templates.set(key, template);
         })
         this.meta.fromSerialized(obj.meta);
