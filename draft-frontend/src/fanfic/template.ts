@@ -133,7 +133,7 @@ class CompiledTemplateImpl implements CompiledTemplate {
             if(!(target instanceof Array)) return "[can't perform array operations on non-array]"
             let pos: number = parseInt(expr.slice(1, expr.length - 1));
             if(isNaN(pos)) return "[invalid array operation]";
-            if(Math.abs(pos) >= target.length) return "[index out of bounds]";
+            if(pos >= target.length || pos < -target.length) return "[index out of bounds]";
             if(pos < 0) pos = target.length + pos;
 
             if(target[pos] instanceof Element) {
@@ -188,21 +188,6 @@ class CompiledTemplateImpl implements CompiledTemplate {
                     return final;
             }
         }
-
-        // let pos: number = 0;
-        // if(selector !== "") {
-        //     pos = parseInt(selector.slice(1, selector.length - 1));
-        //     if(isNaN(pos) || Math.abs(pos) >= target.length) return "undefined";
-        //     if(pos < 0) pos = target.length + pos;
-        // }
-
-        // let singularTarget: Element = target[pos];
-
-        // if(expr === "children") {
-        //     return singularTarget.childNodes.map(cn=>cn.cloneNode(true));
-        // } else {
-        //     return singularTarget.attribs[expr];
-        // }
     }
 
     toString(input: Node[]|string): string {
