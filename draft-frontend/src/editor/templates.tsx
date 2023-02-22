@@ -52,7 +52,7 @@ export class TemplatesTab implements Tab<EditorProps> {
     templateCtx: TemplateContext|undefined = undefined;
 
     setSelection(selection: string|undefined) {
-        if(this.templateCtx!.selectedTemplate !== selection) {
+        if(this.templateCtx!.selectedTemplate !== selection && this.templateCtx!.selectedTemplate !== undefined) {
             this.templateCtx!.tabCtx.currentTab().onClose();
         }
         this.templateCtx!.setSelection(selection);
