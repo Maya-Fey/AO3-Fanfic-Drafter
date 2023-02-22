@@ -64,7 +64,7 @@ function rawCompileFanfic(text: string, templates: Map<string, FicTemplate>): Co
 
     let files: Map<string, string> = new Map<string, string>();
     ret.forEach((chapter, idx)=>{
-        files.set("Chapter " + idx, chapter);
+        files.set("Chapter " + (idx + 1), chapter);
     });
     files.set("stylesheet", stylesheet);
 
@@ -205,5 +205,10 @@ function compile(indent: number, level: Level, nodes: Node[], compiledTemplates:
             code += pTag(true) + "\n" + breakAndIndentSingleNewlines(strip(acc as string), true) + pTag(false) + "\n";
     } 
     chapters.push(code);
+    for(let i: number = 0; i < chapters.length && chapters.length > 1; i++) {
+        if(chapters[i].trim() == "") {
+            chapters.splice(i, 1);
+        }
+    }
     return chapters;
 }
