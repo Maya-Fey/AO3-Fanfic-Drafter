@@ -159,7 +159,7 @@ class CompiledTemplateImpl implements CompiledTemplate {
                 return "[lines expects a string or a text node]"
             }
             let lines: string[] = text.split("\n").filter(line=>line.length > 0);
-            let pre: Element[] = lines.map(line=>new Text(line)).map(node=>new Element("span", {}, [node], ElementType.Tag));
+            let pre: Element[] = lines.map(line=>line.trim()).filter(line=>line.length>0).map(line=>new Text(line)).map(node=>new Element("span", {}, [node], ElementType.Tag));
             final = [];
             pre.forEach(node=>{
                 (final as Array<Node>).push(node);
