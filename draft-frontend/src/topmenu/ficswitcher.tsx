@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { AppContext } from "../App";
 import { FicFlush } from "./ficflush";
+import { NewFic } from "./newficbutton";
 import { ConnectionStatus } from "./serverconnect";
 
 export interface FicSwitcherProps extends React.HTMLProps<HTMLDivElement> {
@@ -15,6 +16,8 @@ export const FicSwitcher = observer((props: FicSwitcherProps)=>{
                <hr/>
                <FicSwitcherDropdown ctx={props.ctx}/>&nbsp;
                <FicFlush ficCtx={props.ctx.fic} serverCtx={props.ctx.server}/>
+               <hr/>
+               <NewFic ficCtx={props.ctx.fic} serverCtx={props.ctx.server}/>
            </React.Fragment>
         );
     } else {
@@ -23,7 +26,8 @@ export const FicSwitcher = observer((props: FicSwitcherProps)=>{
 });
 
 const FicSwitcherDropdown = observer((props: FicSwitcherProps)=>{
-    let options: JSX.Element[] = props.ctx.server.fics.map(title=><FicSwitcherOption key={title} title={title} />)
+    let curSelected: string|undefined = props.ctx.fic.fic?.meta.title;
+    let options: JSX.Element[] = props.ctx.server.fics.map(title=><FicSwitcherOption key={title} title={title} selected={curSelected==title} />)
     return (
         <select onChange={(e)=>{ props.ctx.fic.switchStory(e.target.value, props.ctx.server); }}>
             <option value="">Select a fic to edit</option>
@@ -33,9 +37,14 @@ const FicSwitcherDropdown = observer((props: FicSwitcherProps)=>{
 });
 
 export interface FicSwitcherOptionProps extends React.HTMLProps<HTMLOptionElement> {
-    title: string
+    title: string,
+    selected: boolean
 }
 
 function FicSwitcherOption(props: FicSwitcherOptionProps) {
-    return <option value={props.title}>{props.title}</option>
+    if(props.selected) {
+        return <option value={props.title} selected>{props.title}</option>
+    } else {
+        return <option value={props.title}>{props.title}</option>
+    }
 }
