@@ -78,6 +78,26 @@ export class ServerContext {
         })
     }
 
+    async newFic(): Promise<Fanfic | undefined> {
+        let mac: ContentlessOutgoingPacket = this.newMAC();
+        let resp = await this.tryReq("newfic", {
+            username: mac.username,
+            authenticationCode: mac.authenticationCode,
+        });
+        if(resp instanceof ReqError) {
+            this.onNotConnected();
+            return undefined;
+        } else {
+            let data: any = resp.data;
+            let ret: Fanfic = new Fanfic(data.title, ()=>{
+                this.setDirty.setDirty();
+            });
+            ret.fromSerialized(data);
+            this.fics.push(ret.meta.title);
+            return ret;
+        } 
+    }
+
     async readFic(name: string, revision: string = "latest"): Promise<Fanfic | undefined> {
         let mac: ContentlessOutgoingPacket = this.newMAC();
         let resp = await this.tryReq("read", {

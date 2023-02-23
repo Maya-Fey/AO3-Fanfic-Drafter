@@ -79,6 +79,16 @@ export class FanficContext implements SetDirtyCapability {
     this.dirty = true;
   }
 
+  newfic(serverCtx: ServerContext): void {
+    serverCtx.newFic().then(action(val=>{
+      if(val instanceof Fanfic) {
+        this.fic = val;
+        this.prevName = this.fic?.meta.title;
+        this.dirty = false;
+      }
+    }));
+  }
+
   save(serverCtx: ServerContext): void {
     serverCtx.writeFic(this.prevName!, this.fic!).then(action(success=>{
       if(success) {
