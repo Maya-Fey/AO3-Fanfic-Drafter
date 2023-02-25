@@ -32,7 +32,12 @@ export interface SetDirtyCapability {
   setDirty(): void;
 }
 
-export class AppContext implements RetargetCapability, ModalCapability {
+export interface FlushCapability {
+  flush(): void;
+  canFlush(): boolean;
+}
+
+export class AppContext implements RetargetCapability, ModalCapability, FlushCapability {
   private focus: WindowFocus = WindowFocus.BOTH;
 
   target: EditorTarget = EditorTarget.targetFic();
@@ -63,6 +68,16 @@ export class AppContext implements RetargetCapability, ModalCapability {
   retarget(target: EditorTarget): void {
     if(this.target.equals(target)) return;
     this.target = target;
+  }
+
+  flush(): void {
+    if(this.canFlush()) {
+      this.fic.save(this.server);
+    }
+  }
+
+  canFlush(): boolean {
+    return this.fic.fic !== undefined && this.fic.dirty;
   }
 }
 
