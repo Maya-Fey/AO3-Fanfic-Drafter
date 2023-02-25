@@ -1,6 +1,7 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { AppContext } from "../App";
+import { AutosaveCheckmark } from "./autosavecheckbox";
 import { FicFlush } from "./ficflush";
 import { NewFic } from "./newficbutton";
 import { ConnectionStatus } from "./serverconnect";
@@ -15,9 +16,10 @@ export const FicSwitcher = observer((props: FicSwitcherProps)=>{
            <React.Fragment>
                <hr/>
                <FicSwitcherDropdown ctx={props.ctx}/>&nbsp;
-               <FicFlush ficCtx={props.ctx.fic} serverCtx={props.ctx.server}/>
-               <hr/>
                <NewFic ficCtx={props.ctx.fic} serverCtx={props.ctx.server}/>
+               <hr/>
+               <FicFlush flush={props.ctx}/>&nbsp;
+               <AutosaveCheckmark flush={props.ctx}/>
            </React.Fragment>
         );
     } else {
