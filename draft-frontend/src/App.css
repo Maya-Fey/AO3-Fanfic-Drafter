@@ -112,8 +112,15 @@ html, body, #root {
   height: 100%;
 }
 
-.fic-editor > .CodeMirror {
-  height: 100%;
+.fic-editor > .CodeMirror, .fic-editor > .cm-editor {
+  height: calc(100% - 2rem);
+}
+
+.fic-editor__top-bar {
+  height: 2em;
+  width: 100%;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ddd;
 }
 
 .template-tab {
