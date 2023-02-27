@@ -1,41 +1,39 @@
-import CodeMirror from "codemirror"
-import { timingSafeEqual } from "node:crypto";
+import { EditorView, EditorViewConfig } from "@codemirror/view";
 import { useEffect, useRef } from "react";
 import { FanficContext } from "../App";
 import { EditorTarget } from "../fanfic/editortarget";
-import type { Fanfic } from "../fanfic/fanfiction";
 import { Tab } from "../tabs/TabbedContext";
 import { EditorProps } from "./editor";
-
-require('codemirror/lib/codemirror.css');
-require('codemirror/theme/material.css');
-require('codemirror/theme/neat.css');
-require('codemirror/mode/htmlmixed/htmlmixed.js');
-require('codemirror/lib/codemirror.js');
+import { lineNumbers, gutter } from "@codemirror/view";
+import { EditorState } from "@codemirror/state";
 
 export class TextEditorTab implements Tab<EditorProps> {
 
     ctx: FanficContext|undefined = undefined;
-    editor: CodeMirror.EditorFromTextArea|undefined = undefined;
+    view: EditorView|undefined = undefined;
 
     render: (props: EditorProps)=>JSX.Element = (props: EditorProps)=>{
-        let textRef: React.RefObject<HTMLTextAreaElement> = useRef<HTMLTextAreaElement>(null as HTMLTextAreaElement|null);
+        let textRef: React.RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null as HTMLDivElement|null);
 
         this.ctx = props.fic;
 
         useEffect(()=>{
-            this.editor = CodeMirror.fromTextArea(textRef.current!, {
-                value: textRef.current!.value,
-                mode: "htmlmixed",
-                indentUnit: 4,
-                indentWithTabs: true,
-                lineNumbers: true,
-                lineWrapping: true
+            this.view = new EditorView({
+                state: EditorState.create({
+                    doc: props.fic.fic!.text,
+                    extensions: [
+                        EditorState.tabSize.of(4),
+                        EditorView.lineWrapping,
+                        lineNumbers({}),
+                    ]
+                }),
+                parent: textRef.current!,
             });
+            
 
             let autosaveHandle: NodeJS.Timeout = setInterval(()=>{
-                if(this.editor !== undefined) {
-                    this.ctx!.fic!.updateText(this.editor.getValue());
+                if(this.view !== undefined) {
+                    this.ctx!.fic!.updateText([...this.view!.state.doc].join(""));
                 }
             }, 2000);
             return ()=>{
@@ -46,24 +44,25 @@ export class TextEditorTab implements Tab<EditorProps> {
         useEffect(()=>{
             props.retarget.retarget(EditorTarget.targetFic());
         });
-        
+
         return (
-            <div className="fic-editor">
-                <textarea defaultValue={this.ctx.fic!.text} ref={textRef}>
-                </textarea>
+            <div className="fic-editor" ref={textRef}>
+                <div className="fic-editor__top-bar">
+                    <button>girls</button>
+                </div>
             </div>
         )
     }
 
     onClose(): void {
-        this.ctx!.fic!.text = this.editor!.getValue();
-        this.editor!.toTextArea();
-        this.editor = undefined;
+        this.ctx!.fic!.updateText([...this.view!.state.doc].join(""));
+        this.view!.destroy();
+        this.view = undefined;
     }
 
     hotUpdate(n: TextEditorTab): void {
         this.ctx = n.ctx;
-        this.editor = n.editor;
+        this.view = n.view;
     }
     
 }
