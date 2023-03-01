@@ -7,7 +7,10 @@ import { EditorProps } from "./editor";
 import { lineNumbers, gutter } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { search as CodeMirrorSearch, openSearchPanel, searchPanelOpen, closeSearchPanel } from "@codemirror/search"
-import { KeyBinding, keymap } from "@codemirror/view";
+import { keymap } from "@codemirror/view";
+import { html as LangHTML } from "@codemirror/lang-html"
+import { syntaxHighlighting, HighlightStyle } from "@codemirror/language"
+import { tags } from "@lezer/highlight";
 
 export class TextEditorTab implements Tab<EditorProps> {
 
@@ -40,7 +43,26 @@ export class TextEditorTab implements Tab<EditorProps> {
                                 key: "Ctrl-f",
                                 run: this.toggleSearch
                             }
-                        ])
+                        ]),
+                        LangHTML({}),
+                        syntaxHighlighting(HighlightStyle.define([
+                            {
+                                tag: tags.tagName,
+                                color: "#170"
+                            },
+                            {
+                                tag: tags.angleBracket,
+                                color: "#170"
+                            },
+                            {
+                                tag: tags.attributeName,
+                                color: "blue"
+                            },
+                            {
+                                tag: tags.string,
+                                color: "#a11"
+                            }
+                        ]))
                     ]
                 }),
                 parent: textRef.current!,
